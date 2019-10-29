@@ -1,8 +1,8 @@
-let createError = require('http-errors');
-let express = require('express');
-let useMiddleWares = require('./middlewares')
-let indexRouter = require('./routes/index');
-let usersRouter = require('./routes/users');
+const createError = require('http-errors');
+const express = require('express');
+const useMiddleWares = require('./middlewares')
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
 let app = express();
 const apiVersion = '/api/v1'
@@ -19,12 +19,12 @@ app.use(apiVersion, indexRouter);
 app.use(`${apiVersion}/users`, usersRouter);
 
 // 404 hatasını error handler'a yolla
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
