@@ -1,12 +1,21 @@
 const createError = require('http-errors');
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swagger = require('./docs/swagger');
 const useMiddleWares = require('./middlewares')
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 let app = express();
+
 const apiVersion = '/api/v1'
 let port = process.env.PORT || '3000';
+
+//Docs
+
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swagger));
 
 //MiddleWares
 

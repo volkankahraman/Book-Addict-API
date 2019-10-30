@@ -21,9 +21,24 @@ let users = [{
   "picture": "men/50.jpg"
 }];
 /* GET users listing. */
+/**
+ * @swagger
+ * /users:
+ *    get:
+ *      description: Kullanıcıların listesini döner
+ */
 router.get('/', (req, res, next) => {
   res.json(users);
 });
+
+/**
+ * @swagger
+ * /users/{Id}:
+ *    get:
+ *      parameters:
+ *        name: userId
+ *      description: İstenilen idye ait bir kullanıcı döner
+ */
 router.get('/:id', (req, res, next) => {
   let user = users.find(u => u.id == req.params.id)
   if (user)
