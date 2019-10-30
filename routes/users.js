@@ -26,7 +26,15 @@ let users = [{
  * /users:
  *    get:
  *      description: Kullanıcıların listesini döner
+ *      responses: 
+ *        '200':
+ *          description: Başarıyla kullanıcılar dönüldü.
+ *        '404':
+ *          description: Kullanıcılar bulunamadı
+ *        '500':
+ *          description: Sunucu hatası  
  */
+
 router.get('/', (req, res, next) => {
   res.json(users);
 });
@@ -36,8 +44,18 @@ router.get('/', (req, res, next) => {
  * /users/{Id}:
  *    get:
  *      parameters:
- *        name: userId
+ *       - name: id
+ *         description: user's id
+ *         in: path
  *      description: İstenilen idye ait bir kullanıcı döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kullanıcı dönüldü
+ *        '404':
+ *          description: Kullanıcı bulunamadı
+ *        '500':
+ *          description: Sunucu hastası 
+ * 
  */
 router.get('/:id', (req, res, next) => {
   let user = users.find(u => u.id == req.params.id)

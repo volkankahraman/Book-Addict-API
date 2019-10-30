@@ -8,6 +8,10 @@ let router = express.Router();
  * /:
  *    get:
  *      description: Karşılama mesajı verir.
+ *      responses: 
+ *        '200':
+ *          description: Başarıyla kullanıcı dönüldü
+ * 
  */
 router.get('/', (req, res, next) => {
   res.json({
