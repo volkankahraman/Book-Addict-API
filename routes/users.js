@@ -41,7 +41,7 @@ router.get('/', (req, res, next) => {
 
 /**
  * @swagger
- * /users/{Id}:
+ * /users/{id}:
  *    get:
  *      parameters:
  *       - name: id
