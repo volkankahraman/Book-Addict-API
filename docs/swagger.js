@@ -7,11 +7,11 @@ const options = {
             title: 'Book-Addict-API',
             version: '1.0.0',
             description: 'REST API endpoints for Book Addict Project',
-            servers : ["http://localhost:3000"],
+            servers: ["http://localhost:3000"],
         },
         basePath: '/api/v1',
     },
-    
+
     // List of files to be processes. You can also set globs './routes/*.js'
     apis: ['./routes/*.js'],
 };

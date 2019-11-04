@@ -6,10 +6,32 @@
     "start": "node server"
   },
   "dependencies": {
+    "async": "^2.6.2",
     "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "morgan": "~1.9.1",
+    "mssql": "^5.1.0",
     "swagger-jsdoc": "^3.4.0",
-    "swagger-ui-express": "^4.1.2"
-  }
+    "swagger-ui-express": "^4.1.2",
+    "tedious": "^5.0.3"
+  },
+  "description": "REST API endpoints for Book Addict Project",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volkankahraman/Book-Addict-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/volkankahraman/Book-Addict-API/issues"
+  },
+  "homepage": "https://github.com/volkankahraman/Book-Addict-API#readme"
 }
