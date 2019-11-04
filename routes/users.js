@@ -42,14 +42,16 @@ router.get('/', (req, res, next) => {
       encrypt: true // Use this if you're on Windows Azure
     }
   };
-  sql.connect(config, err => {
-    var rows = [];
-    new sql.Request().query('select * from users', (err, result) => {
-      // ... error checks
-      //res.json(users)
-      res.json(result.recordsets[0]);
-    })
-  });
+  new sql.ConnectionPool(config).connect().then(pool => {
+
+    return pool.request().query("SELECT * FROM users")
+
+  }).then(result => {
+
+    // ... error checks
+    //res.json(users)
+    res.json(result.recordsets[0]);
+  })
   // (async () => {
   //   try {
   //     await sql.connect(config);

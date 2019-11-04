@@ -8,6 +8,10 @@ Url: [api/v1](https://book-addict-api.herokuapp.com/api/v1/)
 
 Url: [docs](https://book-addict-api.herokuapp.com/api-docs)
 
+## Website
+
+Url: [website](http://book-addict.azurewebsites.net/)
+
 ## Built With
 
 * [NodeJS](https://nodejs.org/en/) - NodeJS
