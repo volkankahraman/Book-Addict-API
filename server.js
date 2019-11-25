@@ -3,7 +3,6 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swagger = require('./docs/swagger');
 const useMiddleWares = require('./middlewares')
-const connection = require('./database/connection')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -42,7 +41,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
 
   res.json({
-    err: `${err}`
+    err: err.message
   });
 });
 

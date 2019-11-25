@@ -13,7 +13,7 @@ var config = {
     server: process.env.DB_HOST, // update me
     options: {
         database: process.env.DB_NAME, //update me
-        encrypt: true
+        encrypt: false
     }
 }
 

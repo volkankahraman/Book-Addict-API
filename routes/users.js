@@ -2,6 +2,7 @@ const express = require('express');
 const connection = require('../database/connection')
 const Request = require('tedious').Request;
 const sql = require('mssql')
+const bodyParser = require('body-parser')
 
 
 let router = express.Router();
@@ -16,6 +17,16 @@ let users = [{
   "title": "mr",
   "picture": "men/50.jpg"
 }];
+const config = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  server: process.env.DB_HOST, // You can use 'localhost\\instance' to connect to named instance
+  database: process.env.DB_NAME,
+
+  options: {
+    encrypt: true // Use this if you're on Windows Azure
+  }
+};
 /* GET users listing. */
 /**
  * @swagger
@@ -32,16 +43,7 @@ let users = [{
  */
 
 router.get('/', (req, res, next) => {
-  const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    server: process.env.DB_HOST, // You can use 'localhost\\instance' to connect to named instance
-    database: process.env.DB_NAME,
-
-    options: {
-      encrypt: true // Use this if you're on Windows Azure
-    }
-  };
+  
   new sql.ConnectionPool(config).connect().then(pool => {
 
     return pool.request().query("SELECT * FROM users")
@@ -51,7 +53,9 @@ router.get('/', (req, res, next) => {
     // ... error checks
     //res.json(users)
     res.json(result.recordsets[0]);
-  })
+  }).catch(err=>
+    next(err)
+  )
   // (async () => {
   //   try {
   //     await sql.connect(config);
@@ -111,6 +115,50 @@ router.get('/:id', (req, res, next) => {
     res.json(user)
   else
     next()
+});
+router.post('/add',(req,res,next) =>{
+  if(req.body.username && req.body.password && req.body.fullName && req.body.mail){
+    new sql.ConnectionPool(config).connect().then(pool => {
+      return pool.request()
+        .input('username', sql.VarChar(50), req.body.username)
+        .input('password', sql.VarChar(50), req.body.password)
+        .input('fullName', sql.VarChar(100), req.body.fullName)
+        .input('mail', sql.VarChar(100), req.body.mail)
+
+        .execute('addUser')
+
+    }).then(result => {
+      if(result) res.json(req.body);
+    }).catch(err => next(err))
+  }
+  else
+    res.status(500).json({message:"Parametre eksik"});
+});
+
+router.post('/addAuthor', (req, res, next) => {
+  let missingParameter;
+  for (let propertyName in req.body) {
+    separateObj[req.body.name] = req.body;
+    missingParameter += propertyName+ ' ';
+  }
+  console.log(missingParameter);
+  res.json({message:missingParameter});
+  /*if (req.body.username && req.body.password && req.body.fullName && req.body.mail) {
+    new sql.ConnectionPool(config).connect().then(pool => {
+      return pool.request()
+        .input('username', sql.VarChar(50), req.body.username)
+        .input('password', sql.VarChar(50), req.body.password)
+        .input('fullName', sql.VarChar(100), req.body.fullName)
+        .input('mail', sql.VarChar(100), req.body.mail)
+
+        .execute('addUser')
+
+    }).then(result => {
+      if (result) res.json(req.body);
+    }).catch(err => next(err))
+  }
+  else
+    res.status(500).json({ message: "Parametre eksik" });*/
 });
 
 module.exports = router;
