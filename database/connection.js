@@ -1,23 +1,19 @@
-const Connection = require('tedious').Connection;
+const sql = require('mssql');
 
 require('dotenv').config()
 // Create connection to database
-var config = {
-    authentication: {
-        options: {
-            userName: process.env.DB_USER, // update me
-            password: process.env.DB_PASS // update me
-        },
-        type: 'default'
-    },
-    server: process.env.DB_HOST, // update me
-    options: {
-        database: process.env.DB_NAME, //update me
-        encrypt: false
-    }
-}
+const config = {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    server: process.env.DB_HOST, // You can use 'localhost\\instance' to connect to named instance
+    database: process.env.DB_NAME,
+};
 
-module.exports = new Connection(config);
+
+module.exports = {
+    Connection : new sql.ConnectionPool(config).connect(),
+    sql: sql
+}
 
 // Attempt to connect and execute queries if connection goes through
 

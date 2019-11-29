@@ -6,6 +6,7 @@ const useMiddleWares = require('./middlewares')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const authorsRouter = require('./routes/authors');
 
 require('dotenv').config()
 
@@ -28,6 +29,7 @@ useMiddleWares(app);
 
 app.use(apiVersion, indexRouter);
 app.use(`${apiVersion}/users`, usersRouter);
+app.use(`${apiVersion}/authors`, authorsRouter)
 
 // 404 hatasını error handler'a yolla
 app.use((req, res, next) => {

@@ -1,32 +1,9 @@
 const express = require('express');
-const connection = require('../database/connection')
-const Request = require('tedious').Request;
-const sql = require('mssql')
-const bodyParser = require('body-parser')
+const {Connection, sql} = require('./../Database/connection');
 
 
 let router = express.Router();
 
-let users = [{
-  "id": "1",
-  "email": "liam.walters@example.com",
-  "username": "biglion964",
-  "password": "training",
-  "first_name": "liam",
-  "last_name": "walters",
-  "title": "mr",
-  "picture": "men/50.jpg"
-}];
-const config = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  server: process.env.DB_HOST, // You can use 'localhost\\instance' to connect to named instance
-  database: process.env.DB_NAME,
-
-  options: {
-    encrypt: true // Use this if you're on Windows Azure
-  }
-};
 /* GET users listing. */
 /**
  * @swagger
@@ -44,7 +21,7 @@ const config = {
 
 router.get('/', (req, res, next) => {
   
-  new sql.ConnectionPool(config).connect().then(pool => {
+  Connection.then(pool => {
 
     return pool.request().query("SELECT * FROM users")
 
@@ -106,19 +83,18 @@ router.get('/', (req, res, next) => {
  * 
  */
 router.get('/:id', (req, res, next) => {
-  let user = users.find(u => u.id == req.params.id)
-  connection.on('connect', err => {
-    if (err) next(err)
-  });
-
-  if (user)
-    res.json(user)
-  else
-    next()
+  Connection.then(pool => {
+    return pool.request()
+      .input('id', sql.UniqueIdentifier, req.params.id)
+      .query("SELECT * FROM users where userId=@id");
+  }).then(result => {
+    res.json(result.recordset[0]);
+  }).catch(err => next(err))
 });
+
 router.post('/add',(req,res,next) =>{
   if(req.body.username && req.body.password && req.body.fullName && req.body.mail){
-    new sql.ConnectionPool(config).connect().then(pool => {
+    Connection.then(pool => {
       return pool.request()
         .input('username', sql.VarChar(50), req.body.username)
         .input('password', sql.VarChar(50), req.body.password)
@@ -135,7 +111,7 @@ router.post('/add',(req,res,next) =>{
     res.status(500).json({message:"Parametre eksik"});
 });
 
-router.post('/addAuthor', (req, res, next) => {
+router.post('/:id/addFavoriteAuthor', (req, res, next) => {
   let missingParameter;
   for (let propertyName in req.body) {
     separateObj[req.body.name] = req.body;
@@ -143,8 +119,8 @@ router.post('/addAuthor', (req, res, next) => {
   }
   console.log(missingParameter);
   res.json({message:missingParameter});
-  /*if (req.body.username && req.body.password && req.body.fullName && req.body.mail) {
-    new sql.ConnectionPool(config).connect().then(pool => {
+  if (req.body.username && req.body.password && req.body.fullName && req.body.mail) {
+    Connection.connect().then(pool => {
       return pool.request()
         .input('username', sql.VarChar(50), req.body.username)
         .input('password', sql.VarChar(50), req.body.password)
@@ -158,7 +134,69 @@ router.post('/addAuthor', (req, res, next) => {
     }).catch(err => next(err))
   }
   else
-    res.status(500).json({ message: "Parametre eksik" });*/
+    res.status(500).json({ message: "Parametre eksik" });
 });
+
+router.post('/:id/addFavoriteBook', (req, res, next) => {
+  Connection.then(pool => {
+    return pool.request()
+      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
+
+      .execute('AddFavouriteBook')
+
+  }).then(result => {
+    if (result) res.json(req.body);
+  }).catch(err => next(err))
+})
+
+router.post('/:id/addFavoriteCatagory', (req, res, next) => {
+  Connection.then(pool => {
+    return pool.request()
+      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('CategoryID', sql.UniqueIdentifier, req.body.categoryid)
+
+      .execute('AddFavouriteCategory')
+  }).then(result => {
+    if (result) res.json(req.body);
+  }).catch(err => next(err))
+})
+
+router.post('/:id/addReadBook', (req, res, next) => {
+  Connection.then(pool => {
+    return pool.request()
+      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
+
+      .execute('AddReadBook')
+  }).then(result => {
+    if (result) res.json(req.body);
+  }).catch(err => next(err))
+})
+
+router.post('/:id/addWillReadBook', (req, res, next) => {
+  Connection.then(pool => {
+    return pool.request()
+      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
+
+      .execute('AddWillReadBook')
+  }).then(result => {
+    if (result) res.json(req.body);
+  }).catch(err => next(err))
+})
+
+router.post('/:id/addViewBook', (req, res, next) => {
+  Connection.then(pool => {
+    return pool.request()
+      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
+
+      .execute('AddViewBook')
+  }).then(result => {
+    if (result) res.json(req.body);
+  }).catch(err => next(err))
+})
+
 
 module.exports = router;

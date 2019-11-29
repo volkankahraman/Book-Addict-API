@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node server"
+    "start": "node server",
+    "watch": "nodemon server"
   },
   "dependencies": {
     "async": "^2.6.2",
