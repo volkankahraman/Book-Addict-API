@@ -1,4 +1,5 @@
 const express = require('express');
+const md5 = require('md5')
 const {Connection, sql} = require('./../Database/connection');
 
 
@@ -20,49 +21,25 @@ let router = express.Router();
  */
 
 router.get('/', (req, res, next) => {
-  
+
   Connection.then(pool => {
-
-    return pool.request().query("SELECT * FROM users")
-
+    return pool.request()
+      .execute('GetUsers')
   }).then(result => {
+    res.json(result.recordset);
+  }).catch(err => next(err));
 
-    // ... error checks
-    //res.json(users)
-    res.json(result.recordsets[0]);
-  }).catch(err=>
-    next(err)
-  )
-  // (async () => {
-  //   try {
-  //     await sql.connect(config);
-  //     const result = await sql.query `select * from users`;
-  //     console.dir(result);
-  //     res.json(result);
-  //   } catch (err) {
-  //     console.log(err);
-  //     res.json(users);
+})
 
-  //   }
-
-  // })();
-  // let request = new Request("Select * FROM users", function (err, rowCount) {
-  //   if (err) console.log(err);
-  // });
-  // let row = [];
-
-  // request.on('row', function (columns) {
-
-  //   columns.forEach(column => {
-  //     row[column.metadata.colName] = column.value;
-  //   })
-
-  // });
-  // res.json(row);
-
-  // connection.execSql(request);
-
-});
+router.get('/:id', (req, res, next) => {
+  Connection.then(pool => {
+    return pool.request()
+      .input('userID', sql.UniqueIdentifier, req.params.id)
+      .execute('GetUser')
+  }).then(result => {
+    res.json(result.recordset[0]);
+  }).catch(err => next(err));
+})
 
 /**
  * @swagger
@@ -92,20 +69,65 @@ router.get('/:id', (req, res, next) => {
   }).catch(err => next(err))
 });
 
+/**
+ * @swagger
+ * /users/add:
+ *    post:
+ *      parameters:
+ *       - name: username
+ *         description: user's username
+ *         in: formData
+ *       - name: password
+ *         description: user's password
+ *         in: formData
+ *       - name: fullName
+ *         description: user's mail
+ *         in: formData
+ *       - name: mail
+ *         description: user's mail
+ *         in: formData
+ *      description: İstenilen idye ait bir kullanıcı döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kullanıcı dönüldü
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
+
 router.post('/add',(req,res,next) =>{
   if(req.body.username && req.body.password && req.body.fullName && req.body.mail){
     Connection.then(pool => {
       return pool.request()
-        .input('username', sql.VarChar(50), req.body.username)
-        .input('password', sql.VarChar(50), req.body.password)
-        .input('fullName', sql.VarChar(100), req.body.fullName)
-        .input('mail', sql.VarChar(100), req.body.mail)
+        .input('username', sql.NVarChar(50), req.body.username)
+        .input('mail', sql.NVarChar(50), req.body.mail)
+        .execute('controlUsernameEmail')
 
-        .execute('addUser')
+    }).then(result=>{
 
-    }).then(result => {
-      if(result) res.json(req.body);
-    }).catch(err => next(err))
+      if (!result.recordset[0]){
+        Connection.then(pool => {
+          return pool.request()
+            .input('username', sql.NVarChar(50), req.body.username)
+            .input('password', sql.NVarChar(50), md5(req.body.password))
+            .input('fullName', sql.NVarChar(100), req.body.fullName)
+            .input('mail', sql.NVarChar(100), req.body.mail)
+
+            .execute('addUser')
+
+        }).then(result => {
+          if (result) res.json(req.body);
+        }).catch(err => next(err))
+      }else{
+        res.json({
+          err: 'Böyle bir kullanıcı var'
+        })
+      }
+    }).catch(err=> next(err))
+
+    
   }
   else
     res.status(500).json({message:"Parametre eksik"});

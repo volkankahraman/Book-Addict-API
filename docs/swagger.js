@@ -2,7 +2,6 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {
     swaggerDefinition: {
-        // Like the one described here: https://swagger.io/specification/#infoObject
         info: {
             title: 'Book-Addict-API',
             version: '1.0.0',
@@ -11,8 +10,6 @@ const options = {
         },
         basePath: '/api/v1',
     },
-
-    // List of files to be processes. You can also set globs './routes/*.js'
     apis: ['./routes/*.js'],
 };
 

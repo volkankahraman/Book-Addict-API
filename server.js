@@ -1,19 +1,20 @@
-const createError = require('http-errors');
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swagger = require('./docs/swagger');
 const useMiddleWares = require('./middlewares')
+require('dotenv').config()
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const booksRouter = require('./routes/books');
+const categoriesRouter = require('./routes/categories');
 const authorsRouter = require('./routes/authors');
 
-require('dotenv').config()
 
 let app = express();
 
-const apiVersion = '/api/v1'
-let port = process.env.PORT || '3000';
+const apiVersion = '/api/' + process.env.API_VERSION
+let port = process.env.PORT || 3000;
 
 //Docs
 
@@ -29,11 +30,15 @@ useMiddleWares(app);
 
 app.use(apiVersion, indexRouter);
 app.use(`${apiVersion}/users`, usersRouter);
+app.use(`${apiVersion}/books`, booksRouter);
+app.use(`${apiVersion}/categories`, categoriesRouter);
 app.use(`${apiVersion}/authors`, authorsRouter)
 
 // 404 hatasını error handler'a yolla
 app.use((req, res, next) => {
-  next(createError(404));
+  res.status(404).json({
+    err: '404 Bulunamadı'
+  })
 });
 
 // error handler

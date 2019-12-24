@@ -1,4 +1,5 @@
 const express = require('express');
+
 const { Connection, sql } = require('./../Database/connection');
 
 let router = express.Router();
@@ -7,22 +8,41 @@ let router = express.Router();
 router.get('/',(req,res,next) => {
 
     Connection.then(pool => {
-        return pool.query`select * from authors`
+        return pool.request()
+            .execute('GetAuthors')
     }).then(result => {
-        res.json(result.recordsets[0]);
+        res.json(result.recordset);
     }).catch(err => next(err));
 
 })
 
 router.get('/:id', (req,res,next) => {
-
     Connection.then(pool => {
-        return pool.query`select * from authors where authorId = ${req.params.id}`;
-    })  .then(result => res.json(result.recordset))
-        .catch(err => next(err))
-
+        return pool.request()
+            .input('authorID', sql.UniqueIdentifier, req.params.id)
+            .execute('GetAuthor')
+    }).then(result => {
+        res.json(result.recordset[0]);
+    }).catch(err => next(err));
 })
-
+/**
+ * @swagger
+ * /authors/add:
+ *    post:
+ *      parameters:
+ *       - name: fullName
+ *         description: user's mail
+ *         in: formData
+ *      description: İstenilen idye ait bir kullanıcı döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kullanıcı dönüldü
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/add', (req,res,next) =>{
 
     Connection.then(pool => {
