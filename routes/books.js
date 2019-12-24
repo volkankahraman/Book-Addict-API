@@ -4,8 +4,19 @@ const { Connection, sql } = require('./../Database/connection');
 
 
 let router = express.Router();
-
-    //TODU: Kitap ekleme endpoint'i yazılacak
+/**
+ * @swagger
+ * /books:
+ *    get:
+ *      description: Kitapların listesini döner
+ *      responses:
+ *        '200':
+ *          description: Başarıyla kitaplar dönüldü.
+ *        '404':
+ *          description: kitaplar bulunamadı
+ *        '500':
+ *          description: Sunucu hatası
+ */
 
 router.get('/', (req, res, next) => {
     Connection.then(pool => {
@@ -17,6 +28,25 @@ router.get('/', (req, res, next) => {
     }).catch(err => next(err))
 
 })
+
+/**
+ * @swagger
+ * /books/{id}:
+ *    get:
+ *      parameters:
+ *       - name: id
+ *         description: book's id
+ *         in: path
+ *      description: İstenilen idye ait bir kitap döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kitap dönüldü
+ *        '404':
+ *          description: kitap bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 
 router.get('/:id', (req, res, next) => {    
     
@@ -77,6 +107,27 @@ router.post('/add', (req, res, next) => {
     }).catch(err => next(err))
 })
 
+/**
+ * @swagger
+ * /{id}/addAuthor:
+ *    post:
+ *      parameters:
+ *       - name: bookid
+ *         description: book's bookid
+ *         in: formData
+ *       - name: authorid
+ *         description: book's authorid
+ *         in: formData
+ *      description: Id'ye göre kitaba yazar ekler
+ *      responses:
+ *        '200':
+ *          description: Kitaba yazar eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post(':id/addAuthor', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
@@ -91,6 +142,27 @@ router.post(':id/addAuthor', (req, res, next) => {
 
 })
 
+/**
+ * @swagger
+ * /{id}/addCategory:
+ *    post:
+ *      parameters:
+ *       - name: bookid
+ *         description: book's bookid
+ *         in: formData
+ *       - name: categoryid
+ *         description: book's categoryid
+ *         in: formData
+ *      description: Id'ye göre kitaba kategori ekler
+ *      responses:
+ *        '200':
+ *          description: Kitaba kategori eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post(':id/addCategory', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
@@ -105,6 +177,33 @@ router.post(':id/addCategory', (req, res, next) => {
 
 })
 
+/**
+ * @swagger
+ * /{id}/addPublisher:
+ *    post:
+ *      parameters:
+ *       - name: bookisbn
+ *         description: book's bookisbn
+ *         in: formData
+ *       - name: bookid
+ *         description: book's bookid
+ *         in: formData
+ *       - name: publisherid
+ *         description: book's publisherid
+ *         in: formData
+ *       - name: publishyear
+ *         description: book's publishyear
+ *         in: formData
+ *      description: Id'ye göre kitaba kategori ekler
+ *      responses:
+ *        '200':
+ *          description: Kitaba yayıncı eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post(':id/addPublisher', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
@@ -121,6 +220,30 @@ router.post(':id/addPublisher', (req, res, next) => {
 
 })
 
+/**
+ * @swagger
+ * /{id}/addStar:
+ *    post:
+ *      parameters:
+ *       - name: bookid
+ *         description: book's bookid
+ *         in: formData
+ *       - name: userid
+ *         description: book's userid
+ *         in: formData
+ *       - name: star
+ *         description: book's star
+ *         in: formData
+ *      description: Id'ye göre kitaba yıldız ekler
+ *      responses:
+ *        '200':
+ *          description: Kitaba yıldız eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post(':id/addStar', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
@@ -136,27 +259,36 @@ router.post(':id/addStar', (req, res, next) => {
 
 })
 
-router.post(':id/addStar', (req, res, next) => {
-    Connection.then(pool => {
-        return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.bookid)
-            .input('UserID', sql.UniqueIdentifier, req.body.userid)
-            .input('Star', sql.int, req.body.star)
-
-            .execute('AddBookStar')
-
-    }).then(result => {
-        if (result) res.json(req.body);
-    }).catch(err => next(err))
-
-})
-
+/**
+ * @swagger
+ * /{id}/addComment:
+ *    post:
+ *      parameters:
+ *       - name: bookid
+ *         description: book's bookid
+ *         in: formData
+ *       - name: userid
+ *         description: book's userid
+ *         in: formData
+ *       - name: comment
+ *         description: book's comment
+ *         in: formData
+ *      description: Id'ye göre kitaba yorum ekler
+ *      responses:
+ *        '200':
+ *          description: Kitaba yorum eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post(':id/addComment', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
             .input('BookID', sql.UniqueIdentifier, req.params.bookid)
             .input('UserID', sql.UniqueIdentifier, req.body.userid)
-            .input('Comment', sql.text, req.body.comment)
+            .input('Comment', sql.NVarChar(300), req.body.comment)
 
             .execute('AddBookComment')
 
@@ -166,20 +298,6 @@ router.post(':id/addComment', (req, res, next) => {
 
 })
 
-router.post(':id/addComment', (req, res, next) => {
-    Connection.then(pool => {
-        return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.bookid)
-            .input('UserID', sql.UniqueIdentifier, req.body.userid)
-            .input('Comment', sql.text, req.body.comment)
-
-            .execute('AddBookComment')
-
-    }).then(result => {
-        if (result) res.json(req.body);
-    }).catch(err => next(err))
-
-})
 
 
 

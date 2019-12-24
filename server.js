@@ -7,6 +7,7 @@ require('dotenv').config()
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const booksRouter = require('./routes/books');
+const publishersRouter = require('./routes/publishers');
 const categoriesRouter = require('./routes/categories');
 const authorsRouter = require('./routes/authors');
 
@@ -32,6 +33,7 @@ app.use(apiVersion, indexRouter);
 app.use(`${apiVersion}/users`, usersRouter);
 app.use(`${apiVersion}/books`, booksRouter);
 app.use(`${apiVersion}/categories`, categoriesRouter);
+app.use(`${apiVersion}/publishers`, publishersRouter); 
 app.use(`${apiVersion}/authors`, authorsRouter)
 
 // 404 hatasını error handler'a yolla

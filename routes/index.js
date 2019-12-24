@@ -2,7 +2,6 @@ const express = require('express');
 let router = express.Router();
 const {Connection, sql} = require('./../Database/connection');
 
-const apiVersion = '/api/' + process.env.API_VERSION
 /* GET home page. */
 
 function getProcedure(procedureName) {
@@ -25,6 +24,21 @@ router.get('/', (req, res, next) => {
   });
 });
 
+
+/**
+ * @swagger
+ * /languages:
+ *    get:
+ *      description: Dillerin listesini döner
+ *      responses:
+ *        '200':
+ *          description: Başarıyla diller dönüldü.
+ *        '404':
+ *          description: diller bulunamadı
+ *        '500':
+ *          description: Sunucu hatası
+ */
+
 router.get('/languages', (req, res, next) =>{
 
   getProcedure('GetLanguage')
@@ -37,6 +51,24 @@ router.get('/languages', (req, res, next) =>{
 
 })
 
+/**
+ * @swagger
+ * /languages/{id}:
+ *    get:
+ *      parameters:
+ *       - name: id
+ *         description: language's id
+ *         in: path
+ *      description: İstenilen idye ait bir dil döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen dil dönüldü
+ *        '404':
+ *          description: dil bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.get('/languages/:id', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()

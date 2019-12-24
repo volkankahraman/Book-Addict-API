@@ -31,16 +31,6 @@ router.get('/', (req, res, next) => {
 
 })
 
-router.get('/:id', (req, res, next) => {
-  Connection.then(pool => {
-    return pool.request()
-      .input('userID', sql.UniqueIdentifier, req.params.id)
-      .execute('GetUser')
-  }).then(result => {
-    res.json(result.recordset[0]);
-  }).catch(err => next(err));
-})
-
 /**
  * @swagger
  * /users/{id}:
@@ -62,12 +52,13 @@ router.get('/:id', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
-      .input('id', sql.UniqueIdentifier, req.params.id)
-      .query("SELECT * FROM users where userId=@id");
+      .input('userID', sql.UniqueIdentifier, req.params.id)
+      .execute('GetUser')
   }).then(result => {
-    res.json(result.recordset[0]);
-  }).catch(err => next(err))
-});
+    res.json(result.recordset);
+  }).catch(err => next(err));
+})
+
 
 /**
  * @swagger
@@ -133,23 +124,22 @@ router.post('/add',(req,res,next) =>{
     res.status(500).json({message:"Parametre eksik"});
 });
 
+
+
 router.post('/:id/addFavoriteAuthor', (req, res, next) => {
   let missingParameter;
   for (let propertyName in req.body) {
     separateObj[req.body.name] = req.body;
     missingParameter += propertyName+ ' ';
   }
-  console.log(missingParameter);
   res.json({message:missingParameter});
-  if (req.body.username && req.body.password && req.body.fullName && req.body.mail) {
-    Connection.connect().then(pool => {
+  if (req.body.userid && req.body.authorid) {
+    Connection.then(pool => {
       return pool.request()
-        .input('username', sql.VarChar(50), req.body.username)
-        .input('password', sql.VarChar(50), req.body.password)
-        .input('fullName', sql.VarChar(100), req.body.fullName)
-        .input('mail', sql.VarChar(100), req.body.mail)
+        .input('UserID', sql.UniqueIdentifier, req.params.userid)
+        .input('AuthorId', sql.UniqueIdentifier, req.body.authorid)
 
-        .execute('addUser')
+        .execute('AddFavouriteAuthor')
 
     }).then(result => {
       if (result) res.json(req.body);
@@ -159,6 +149,27 @@ router.post('/:id/addFavoriteAuthor', (req, res, next) => {
     res.status(500).json({ message: "Parametre eksik" });
 });
 
+/**
+ * @swagger
+ * /{id}/addFavoriteBook:
+ *    post:
+ *      parameters:
+ *       - name: userid
+ *         description: user's userid
+ *         in: formData
+ *       - name: bookid
+ *         description: book's id
+ *         in: formData
+ *      description: Idlere göre kullanıcıya favori kitap ekler.
+ *      responses:
+ *        '200':
+ *          description: Favori kitap eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/:id/addFavoriteBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
@@ -172,6 +183,27 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
   }).catch(err => next(err))
 })
 
+/**
+ * @swagger
+ * /{id}/addFavoriteCatagory:
+ *    post:
+ *      parameters:
+ *       - name: userid
+ *         description: user's userid
+ *         in: formData
+ *       - name: categoryid
+ *         description: category's id
+ *         in: formData
+ *      description: Idlere göre kullanıcıya favori kategori ekler.
+ *      responses:
+ *        '200':
+ *          description: Favori kategori eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/:id/addFavoriteCatagory', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
@@ -184,6 +216,27 @@ router.post('/:id/addFavoriteCatagory', (req, res, next) => {
   }).catch(err => next(err))
 })
 
+/**
+ * @swagger
+ * /{id}/addReadBook:
+ *    post:
+ *      parameters:
+ *       - name: userid
+ *         description: user's userid
+ *         in: formData
+ *       - name: bookid
+ *         description: book's id
+ *         in: formData
+ *      description: Idlere göre kullanıcıya okunmuş kitap ekler.
+ *      responses:
+ *        '200':
+ *          description: Okunmuş kitap eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/:id/addReadBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
@@ -196,6 +249,27 @@ router.post('/:id/addReadBook', (req, res, next) => {
   }).catch(err => next(err))
 })
 
+/**
+ * @swagger
+ * /{id}/addWillReadBook:
+ *    post:
+ *      parameters:
+ *       - name: userid
+ *         description: user's userid
+ *         in: formData
+ *       - name: bookid
+ *         description: book's id
+ *         in: formData
+ *      description: Idlere göre kullanıcıya okunacak kitap ekler.
+ *      responses:
+ *        '200':
+ *          description: Okunacak kitap eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/:id/addWillReadBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
@@ -207,7 +281,27 @@ router.post('/:id/addWillReadBook', (req, res, next) => {
     if (result) res.json(req.body);
   }).catch(err => next(err))
 })
-
+/**
+ * @swagger
+ * /{id}/addViewBook:
+ *    post:
+ *      parameters:
+ *       - name: userid
+ *         description: user's userid
+ *         in: formData
+ *       - name: bookid
+ *         description: book's id
+ *         in: formData
+ *      description: Idlere göre kullanıcıya görüntülenen kitap ekler.
+ *      responses:
+ *        '200':
+ *          description: Görüntülenen kitap eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/:id/addViewBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()

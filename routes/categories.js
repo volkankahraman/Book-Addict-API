@@ -4,6 +4,20 @@ const {Connection, sql} = require('./../Database/connection');
 
 let router = express.Router();
 
+/* GET Category listing. */
+/**
+ * @swagger
+ * /categories:
+ *    get:
+ *      description: Kategorilerin listesini döner
+ *      responses:
+ *        '200':
+ *          description: Başarıyla Kategoriler dönüldü.
+ *        '404':
+ *          description: Kategoriler bulunamadı
+ *        '500':
+ *          description: Sunucu hatası
+ */
 router.get('/', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
@@ -13,18 +27,54 @@ router.get('/', (req, res, next) => {
     }).catch(err => next(err));
 })
 
-
+/**
+ * @swagger
+ * /categories/{id}:
+ *    get:
+ *      parameters:
+ *       - name: id
+ *         description: category's id
+ *         in: path
+ *      description: İstenilen idye ait bir kategori döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen Kategori dönüldü
+ *        '404':
+ *          description: Kategori bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.get('/:id', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
             .input('categorieID', sql.UniqueIdentifier, req.params.id)
-            .execute('GetCategorie')
+            .execute('GetCategory')
     }).then(result => {
-        res.json(result.recordset[0]);
+        res.json(result.recordset);
     }).catch(err => next(err));
 })
 
 
+
+/**
+ * @swagger
+ * /users/add:
+ *    post:
+ *      parameters:
+ *       - name: CategoryName
+ *         description: user's CategoryName
+ *         in: formData
+ *      description: İstenilen idye ait bir kullanıcı döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kullanıcı dönüldü
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 router.post('/add', (req, res, next) => {
 
     Connection.then(pool => {
