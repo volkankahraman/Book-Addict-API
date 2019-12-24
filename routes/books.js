@@ -91,7 +91,7 @@ router.get('/:id', (req, res, next) => {
  */
 router.post('/add', (req, res, next) => {
     Connection.then(pool => {
-        if (eq.body.bookname || req.body.bookNumberOfPages || req.body.bookCoverPicturePath || req.body.languageID){
+        if (req.body.bookname || req.body.bookNumberOfPages || req.body.bookCoverPicturePath || req.body.languageID){
         return pool.request()
             .input('bookName', sql.NVarChar(50), req.body.bookname)
             .input('bookNumberOfPages', sql.Int, req.body.bookNumberOfPages)
