@@ -9,6 +9,8 @@ let router = express.Router();
  * @swagger
  * /categories:
  *    get:
+ *      tags:
+ *       - Categories
  *      description: Kategorilerin listesini döner
  *      responses:
  *        '200':
@@ -31,6 +33,8 @@ router.get('/', (req, res, next) => {
  * @swagger
  * /categories/{id}:
  *    get:
+ *      tags:
+ *       - Categories
  *      parameters:
  *       - name: id
  *         description: category's id
@@ -61,6 +65,8 @@ router.get('/:id', (req, res, next) => {
  * @swagger
  * /categories/add:
  *    post:
+ *      tags:
+ *       - Categories
  *      parameters:
  *       - name: categoryname
  *         description: category's name

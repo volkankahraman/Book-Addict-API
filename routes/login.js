@@ -9,6 +9,8 @@ const { Connection, sql } = require('./../Database/connection');
 * @swagger
 * /login:
 *    post:
+*      tags:
+*       - Languages
 *      parameters:
 *       - name: username
 *         description: users's username
@@ -34,8 +36,8 @@ router.post('/', (req, res, next)=>{
             .input('password', sql.NVarChar(900), md5(req.body.password))
             .execute('ControlLogin')
     }).then(result => {
-        let user = result.recordset[0][0]
-        if(user){
+        if (result.recordset[0]){
+            let user = result.recordset[0][0]
             jwt.sign(user, process.env.SECRET_KEY, function (err, token) {
                 if (err) {
                     next(err);

@@ -31,6 +31,8 @@ router.get('/', (req, res, next) => {
  * @swagger
  * /languages:
  *    get:
+ *      tags:
+ *       - Languages
  *      description: Dillerin listesini döner
  *      responses:
  *        '200':
@@ -56,6 +58,8 @@ router.get('/languages', (req, res, next) =>{
  * @swagger
  * /languages/{id}:
  *    get:
+ *      tags:
+ *       - Languages
  *      parameters:
  *       - name: id
  *         description: language's id

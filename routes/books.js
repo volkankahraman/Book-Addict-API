@@ -8,6 +8,8 @@ let router = express.Router();
  * @swagger
  * /books:
  *    get:
+ *      tags:
+ *       - Books
  *      description: Kitapların listesini döner
  *      responses:
  *        '200':
@@ -34,6 +36,8 @@ router.get('/', (req, res, next) => {
  * @swagger
  * /books/{id}:
  *    get:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: id
  *         description: book's id
@@ -67,6 +71,8 @@ router.get('/:id', (req, res, next) => {
  * @swagger
  * /books/add:
  *    post:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: bookname
  *         description: book's bookname
@@ -112,6 +118,8 @@ router.post('/add', (req, res, next) => {
  * @swagger
  * /books/{id}/addAuthor:
  *    post:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: id
  *         description: book's bookid
@@ -147,6 +155,8 @@ router.post('/:id/addAuthor', (req, res, next) => {
  * @swagger
  * /books/{id}/addCategory:
  *    post:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: id
  *         description: book's bookid
@@ -182,6 +192,8 @@ router.post('/:id/addCategory', (req, res, next) => {
  * @swagger
  * /books/{id}/addPublisher:
  *    post:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: id
  *         description: book's id
@@ -225,6 +237,8 @@ router.post('/:id/addPublisher', (req, res, next) => {
  * @swagger
  * /books/{id}/addStar:
  *    post:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: id
  *         description: book's bookid
@@ -264,6 +278,8 @@ router.post('/:id/addStar', (req, res, next) => {
  * @swagger
  * /books/{id}/addComment:
  *    post:
+ *      tags:
+ *       - Books
  *      parameters:
  *       - name: id
  *         description: book's bookid

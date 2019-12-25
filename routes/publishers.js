@@ -12,6 +12,8 @@ let router = express.Router();
  * @swagger
  * /publishers:
  *    get:
+ *      tags:
+ *       - Publishers
  *      description: Publishers listesini döner
  *      responses:
  *        '200':
@@ -34,6 +36,8 @@ router.get('/', (req, res, next) => {
  * @swagger
  * /publishers/add:
  *    post:
+ *      tags:
+ *       - Publishers
  *      parameters:
  *       - name: publisherName
  *         description: book's publisherName

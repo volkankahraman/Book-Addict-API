@@ -10,6 +10,8 @@ let router = express.Router();
  * @swagger
  * /users:
  *    get:
+ *      tags:
+ *       - Users
  *      description: Kullanıcıların listesini döner
  *      responses: 
  *        '200':
@@ -35,6 +37,8 @@ router.get('/', (req, res, next) => {
  * @swagger
  * /users/{id}:
  *    get:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's id
@@ -64,6 +68,8 @@ router.get('/:id', (req, res, next) => {
  * @swagger
  * /users/add:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: username
  *         description: user's username
@@ -128,6 +134,8 @@ router.post('/add',(req,res,next) =>{
  * @swagger
  * /users/{id}/addFavoriteAuthor:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's userid
@@ -175,6 +183,8 @@ router.post('/:id/addFavoriteAuthor', (req, res, next) => {
  * @swagger
  * /users/{id}/addFavoriteBook:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's userid
@@ -209,6 +219,8 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
  * @swagger
  * /users/{id}/addFavoriteCatagory:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's userid
@@ -242,6 +254,8 @@ router.post('/:id/addFavoriteCatagory', (req, res, next) => {
  * @swagger
  * /users/{id}/addReadBook:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's userid
@@ -275,6 +289,8 @@ router.post('/:id/addReadBook', (req, res, next) => {
  * @swagger
  * /users/{id}/addWillReadBook:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's userid
@@ -307,6 +323,8 @@ router.post('/:id/addWillReadBook', (req, res, next) => {
  * @swagger
  * /users/{id}/addViewBook:
  *    post:
+ *      tags:
+ *       - Users
  *      parameters:
  *       - name: id
  *         description: user's userid

@@ -9,6 +9,8 @@ let router = express.Router();
  * @swagger
  * /authors:
  *    get:
+ *      tags:
+ *       - Authors
  *      description: Yazarların listesini döner
  *      responses:
  *        '200':
@@ -33,6 +35,8 @@ router.get('/',(req,res,next) => {
  * @swagger
  * /authors/{id}:
  *    get:
+ *      tags:
+ *       - Authors
  *      parameters:
  *       - name: id
  *         description: author's id
@@ -60,6 +64,8 @@ router.get('/:id', (req,res,next) => {
  * @swagger
  * /authors/add:
  *    post:
+ *      tags:
+ *       - Authors
  *      parameters:
  *       - name: fullName
  *         description: user's mail
