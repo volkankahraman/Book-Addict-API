@@ -60,6 +60,40 @@ router.get('/:id', (req,res,next) => {
         res.json(result.recordset[0]);
     }).catch(err => next(err));
 })
+
+/**
+ * @swagger
+ * /authors/find/{search}:
+ *    get:
+ *      tags:
+ *       - Authors
+ *      parameters:
+ *       - name: search
+ *         description: search's text
+ *         in: path
+ *      description: Aranılan veriye ait bir yazar döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen yazarlar dönüldü
+ *        '404':
+ *          description: yazarlar bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
+
+router.get('/find/:search', (req, res, next) => {
+
+    Connection.then(pool => {
+        return pool.request()
+            .input('search', sql.NVarChar(100), req.params.search)
+            .execute('GetAuthorsBySearch')
+
+    }).then(result => {
+        if (result) res.json(result.recordset[0]);
+    }).catch(err => next(err))
+
+})
 /**
  * @swagger
  * /authors/add:

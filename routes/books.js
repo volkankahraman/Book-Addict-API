@@ -2,7 +2,7 @@ const express = require('express'),
     { authorize } = require('./../authorization'),
     { Connection, sql } = require('./../Database/connection'),
     router = express.Router();
-    
+
 /**
  * @swagger
  * /books:
@@ -27,7 +27,6 @@ router.get('/', (req, res, next) => {
             .execute('GetBooks')
 
     }).then(result => {
-    
         if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
@@ -54,8 +53,8 @@ router.get('/', (req, res, next) => {
  *
  */
 
-router.get('/:id', (req, res, next) => {    
-    
+router.get('/:id', (req, res, next) => {
+
     Connection.then(pool => {
         return pool.request()
             .input('bookID', sql.UniqueIdentifier, req.params.id)
@@ -63,6 +62,75 @@ router.get('/:id', (req, res, next) => {
 
     }).then(result => {
         console.dir(result);
+        if (result) res.json(result.recordset[0]);
+    }).catch(err => next(err))
+
+})
+
+
+/**
+ * @swagger
+ * /books/find/{search}:
+ *    get:
+ *      tags:
+ *       - Books
+ *      parameters:
+ *       - name: search
+ *         description: search's text
+ *         in: path
+ *      description: Aranılan veriye ait bir kitap döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kitaplar dönüldü
+ *        '404':
+ *          description: kitaplar bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
+
+router.get('/find/:search', (req, res, next) => {    
+    
+    Connection.then(pool => {
+        return pool.request()
+            .input('search', sql.NVarChar(100), req.params.search)
+            .execute('GetBooksBySearch')
+
+    }).then(result => {
+        if (result) res.json(result.recordset[0]);
+    }).catch(err => next(err))
+
+})
+
+/**
+ * @swagger
+ * /books/findByCategory/{category}:
+ *    get:
+ *      tags:
+ *       - Books
+ *      parameters:
+ *       - name: category
+ *         description: category's id
+ *         in: path
+ *      description: Aranılan kategoriye ait kitap döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kitaplar dönüldü
+ *        '404':
+ *          description: kitaplar bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
+
+router.get('/findByCategory/:category', (req, res, next) => {
+
+    Connection.then(pool => {
+        return pool.request()
+            .input('categoryID', sql.NVarChar(100), req.params.category)
+            .execute('GetBooksByCategory')
+
+    }).then(result => {
         if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
