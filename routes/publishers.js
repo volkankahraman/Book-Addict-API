@@ -6,6 +6,30 @@ const { Connection, sql } = require('./../Database/connection');
 let router = express.Router();
 
 
+
+/* GET Publishers listing. */
+/**
+ * @swagger
+ * /publishers:
+ *    get:
+ *      description: Publishers listesini döner
+ *      responses:
+ *        '200':
+ *          description: Başarıyla Yayıncılar dönüldü.
+ *        '404':
+ *          description: Yayıncılar bulunamadı
+ *        '500':
+ *          description: Sunucu hatası
+ */
+router.get('/', (req, res, next) => {
+    Connection.then(pool => {
+        return pool.request()
+            .execute('GetPublishers')
+    }).then(result => {
+        res.json(result.recordset);
+    }).catch(err => next(err));
+})
+
 /**
  * @swagger
  * /publishers/add:

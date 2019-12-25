@@ -5,6 +5,7 @@ const useMiddleWares = require('./middlewares')
 require('dotenv').config()
 
 const indexRouter = require('./routes/index');
+const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users');
 const booksRouter = require('./routes/books');
 const publishersRouter = require('./routes/publishers');
@@ -31,6 +32,7 @@ useMiddleWares(app);
 
 app.use(apiVersion, indexRouter);
 app.use(`${apiVersion}/users`, usersRouter);
+app.use(`${apiVersion}/login`, loginRouter);
 app.use(`${apiVersion}/books`, booksRouter);
 app.use(`${apiVersion}/categories`, categoriesRouter);
 app.use(`${apiVersion}/publishers`, publishersRouter); 

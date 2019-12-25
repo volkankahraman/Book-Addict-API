@@ -103,7 +103,7 @@ router.post('/add',(req,res,next) =>{
           return pool.request()
             .input('username', sql.NVarChar(50), req.body.username)
             .input('password', sql.NVarChar(50), md5(req.body.password))
-            .input('fullName', sql.NVarChar(100), req.body.fullName)
+            .input('userFullName', sql.NVarChar(100), req.body.fullName)
             .input('mail', sql.NVarChar(100), req.body.mail)
 
             .execute('addUser')
@@ -124,19 +124,41 @@ router.post('/add',(req,res,next) =>{
     res.status(500).json({message:"Parametre eksik"});
 });
 
-
+/**
+ * @swagger
+ * /users/{id}/addFavoriteAuthor:
+ *    post:
+ *      parameters:
+ *       - name: id
+ *         description: user's userid
+ *         in: path
+ *       - name: authorid
+ *         description: author's id
+ *         in: formData
+ *      description: Idlere göre kullanıcıya favori yazar ekler.
+ *      responses:
+ *        '200':
+ *          description: Favori yazar eklendi
+ *        '404':
+ *          description: Sayfa bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 
 router.post('/:id/addFavoriteAuthor', (req, res, next) => {
-  let missingParameter;
-  for (let propertyName in req.body) {
-    separateObj[req.body.name] = req.body;
-    missingParameter += propertyName+ ' ';
-  }
-  res.json({message:missingParameter});
-  if (req.body.userid && req.body.authorid) {
+  // let missingParameter;
+  // for (let propertyName in req.body) {
+  //   separateObj[req.body.name] = req.body;
+  //   missingParameter += propertyName+ ' ';
+  // }
+  // res.json({message:missingParameter});
+
+  
+  if (req.body.authorid) {
     Connection.then(pool => {
       return pool.request()
-        .input('UserID', sql.UniqueIdentifier, req.params.userid)
+        .input('UserID', sql.UniqueIdentifier, req.params.id)
         .input('AuthorId', sql.UniqueIdentifier, req.body.authorid)
 
         .execute('AddFavouriteAuthor')
@@ -151,12 +173,12 @@ router.post('/:id/addFavoriteAuthor', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addFavoriteBook:
+ * /users/{id}/addFavoriteBook:
  *    post:
  *      parameters:
- *       - name: userid
+ *       - name: id
  *         description: user's userid
- *         in: formData
+ *         in: path
  *       - name: bookid
  *         description: book's id
  *         in: formData
@@ -173,7 +195,7 @@ router.post('/:id/addFavoriteAuthor', (req, res, next) => {
 router.post('/:id/addFavoriteBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('UserID', sql.UniqueIdentifier, req.params.id)
       .input('BookID', sql.UniqueIdentifier, req.body.bookid)
 
       .execute('AddFavouriteBook')
@@ -185,12 +207,12 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addFavoriteCatagory:
+ * /users/{id}/addFavoriteCatagory:
  *    post:
  *      parameters:
- *       - name: userid
+ *       - name: id
  *         description: user's userid
- *         in: formData
+ *         in: path
  *       - name: categoryid
  *         description: category's id
  *         in: formData
@@ -207,7 +229,7 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
 router.post('/:id/addFavoriteCatagory', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('UserID', sql.UniqueIdentifier, req.params.id)
       .input('CategoryID', sql.UniqueIdentifier, req.body.categoryid)
 
       .execute('AddFavouriteCategory')
@@ -218,12 +240,12 @@ router.post('/:id/addFavoriteCatagory', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addReadBook:
+ * /users/{id}/addReadBook:
  *    post:
  *      parameters:
- *       - name: userid
+ *       - name: id
  *         description: user's userid
- *         in: formData
+ *         in: path
  *       - name: bookid
  *         description: book's id
  *         in: formData
@@ -240,7 +262,7 @@ router.post('/:id/addFavoriteCatagory', (req, res, next) => {
 router.post('/:id/addReadBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('UserID', sql.UniqueIdentifier, req.params.id)
       .input('BookID', sql.UniqueIdentifier, req.body.bookid)
 
       .execute('AddReadBook')
@@ -251,12 +273,12 @@ router.post('/:id/addReadBook', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addWillReadBook:
+ * /users/{id}/addWillReadBook:
  *    post:
  *      parameters:
- *       - name: userid
+ *       - name: id
  *         description: user's userid
- *         in: formData
+ *         in: path
  *       - name: bookid
  *         description: book's id
  *         in: formData
@@ -273,7 +295,7 @@ router.post('/:id/addReadBook', (req, res, next) => {
 router.post('/:id/addWillReadBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('UserID', sql.UniqueIdentifier, req.params.id)
       .input('BookID', sql.UniqueIdentifier, req.body.bookid)
 
       .execute('AddWillReadBook')
@@ -283,12 +305,12 @@ router.post('/:id/addWillReadBook', (req, res, next) => {
 })
 /**
  * @swagger
- * /{id}/addViewBook:
+ * /users/{id}/addViewBook:
  *    post:
  *      parameters:
- *       - name: userid
+ *       - name: id
  *         description: user's userid
- *         in: formData
+ *         in: path
  *       - name: bookid
  *         description: book's id
  *         in: formData
@@ -305,7 +327,7 @@ router.post('/:id/addWillReadBook', (req, res, next) => {
 router.post('/:id/addViewBook', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.userid)
+      .input('UserID', sql.UniqueIdentifier, req.params.id)
       .input('BookID', sql.UniqueIdentifier, req.body.bookid)
 
       .execute('AddViewBook')

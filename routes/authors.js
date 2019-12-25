@@ -78,7 +78,7 @@ router.post('/add', (req,res,next) =>{
 
     Connection.then(pool => {
         return pool.request()
-            .input('FullName', sql.VarChar(100), req.body.fullName)
+            .input('authorFullName', sql.VarChar(100), req.body.fullName)
             
             .execute('AddAuthor')
 

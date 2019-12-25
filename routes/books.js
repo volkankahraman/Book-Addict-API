@@ -24,7 +24,8 @@ router.get('/', (req, res, next) => {
             .execute('GetBooks')
 
     }).then(result => {
-        if (result) res.json(result.recordset);
+    
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })
@@ -57,7 +58,7 @@ router.get('/:id', (req, res, next) => {
 
     }).then(result => {
         console.dir(result);
-        if (result) res.json(result.recordset);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })
@@ -98,7 +99,7 @@ router.post('/add', (req, res, next) => {
             .input('bookCoverPicturePath', sql.NVarChar(100), req.body.bookCoverPicturePath)
             .input('languageID', sql.NVarChar(100), req.body.languageID)
 
-            .execute('addUser')
+            .execute('addBook')
         }
         else
             res.status(500).json({ message: "Parametre eksik" });
@@ -109,12 +110,12 @@ router.post('/add', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addAuthor:
+ * /books/{id}/addAuthor:
  *    post:
  *      parameters:
- *       - name: bookid
+ *       - name: id
  *         description: book's bookid
- *         in: formData
+ *         in: path
  *       - name: authorid
  *         description: book's authorid
  *         in: formData
@@ -128,10 +129,10 @@ router.post('/add', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post(':id/addAuthor', (req, res, next) => {
+router.post('/:id/addAuthor', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
-            .input('BookID', sql.UniqueIdentifier , req.body.bookid)
+            .input('BookID', sql.UniqueIdentifier , req.params.id)
             .input('AuthorID', sql.UniqueIdentifier , req.body.authorid)
 
             .execute('AddBookAuthor')
@@ -144,12 +145,12 @@ router.post(':id/addAuthor', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addCategory:
+ * /books/{id}/addCategory:
  *    post:
  *      parameters:
- *       - name: bookid
+ *       - name: id
  *         description: book's bookid
- *         in: formData
+ *         in: path
  *       - name: categoryid
  *         description: book's categoryid
  *         in: formData
@@ -163,10 +164,10 @@ router.post(':id/addAuthor', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post(':id/addCategory', (req, res, next) => {
+router.post('/:id/addCategory', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.body.bookid)
+            .input('BookID', sql.UniqueIdentifier, req.params.id)
             .input('CategoryID', sql.UniqueIdentifier, req.body.categoryid)
 
             .execute('AddBookCategory')
@@ -179,14 +180,14 @@ router.post(':id/addCategory', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addPublisher:
+ * /books/{id}/addPublisher:
  *    post:
  *      parameters:
+ *       - name: id
+ *         description: book's id
+ *         in: path
  *       - name: bookisbn
  *         description: book's bookisbn
- *         in: formData
- *       - name: bookid
- *         description: book's bookid
  *         in: formData
  *       - name: publisherid
  *         description: book's publisherid
@@ -204,13 +205,13 @@ router.post(':id/addCategory', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post(':id/addPublisher', (req, res, next) => {
+router.post('/:id/addPublisher', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
-            .input('BookISBN', sql.Varchar(17), req.body.bookisbn)
-            .input('BookID', sql.UniqueIdentifier, req.body.bookid)
+            .input('BookISBN', sql.NVarChar(17), req.body.bookisbn)
+            .input('BookID', sql.UniqueIdentifier, req.params.id)
             .input('PublisherID', sql.UniqueIdentifier, req.body.publisherid)
-            .input('PublishYear', sql.Varchar(4), req.body.publishyear)
+            .input('PublishYear', sql.NVarChar(4), req.body.publishyear)
 
             .execute('AddBookPublishicationInformation')
 
@@ -222,12 +223,12 @@ router.post(':id/addPublisher', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addStar:
+ * /books/{id}/addStar:
  *    post:
  *      parameters:
- *       - name: bookid
+ *       - name: id
  *         description: book's bookid
- *         in: formData
+ *         in: path
  *       - name: userid
  *         description: book's userid
  *         in: formData
@@ -244,12 +245,12 @@ router.post(':id/addPublisher', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post(':id/addStar', (req, res, next) => {
+router.post('/:id/addStar', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.bookid)
+            .input('BookID', sql.UniqueIdentifier, req.params.id)
             .input('UserID', sql.UniqueIdentifier, req.body.userid)
-            .input('Star', sql.int, req.body.star)
+            .input('Star', sql.Int, req.body.star)
 
             .execute('AddBookStar')
 
@@ -261,12 +262,12 @@ router.post(':id/addStar', (req, res, next) => {
 
 /**
  * @swagger
- * /{id}/addComment:
+ * /books/{id}/addComment:
  *    post:
  *      parameters:
- *       - name: bookid
+ *       - name: id
  *         description: book's bookid
- *         in: formData
+ *         in: path
  *       - name: userid
  *         description: book's userid
  *         in: formData
@@ -283,10 +284,10 @@ router.post(':id/addStar', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post(':id/addComment', (req, res, next) => {
+router.post('/:id/addComment', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.bookid)
+            .input('BookID', sql.UniqueIdentifier, req.params.id)
             .input('UserID', sql.UniqueIdentifier, req.body.userid)
             .input('Comment', sql.NVarChar(300), req.body.comment)
 

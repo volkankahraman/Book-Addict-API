@@ -59,16 +59,16 @@ router.get('/:id', (req, res, next) => {
 
 /**
  * @swagger
- * /users/add:
+ * /categories/add:
  *    post:
  *      parameters:
- *       - name: CategoryName
- *         description: user's CategoryName
+ *       - name: categoryname
+ *         description: category's name
  *         in: formData
- *      description: İstenilen idye ait bir kullanıcı döner
+ *      description: Kategori ekler
  *      responses:
  *        '200':
- *          description: İstenilen kullanıcı dönüldü
+ *          description: Kategori eklendi
  *        '404':
  *          description: Sayfa bulunamadı
  *        '500':

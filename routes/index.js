@@ -1,4 +1,5 @@
-const express = require('express');
+const express = require('express'),
+      jwt = require('jsonwebtoken');
 let router = express.Router();
 const {Connection, sql} = require('./../Database/connection');
 
@@ -25,6 +26,7 @@ router.get('/', (req, res, next) => {
 });
 
 
+
 /**
  * @swagger
  * /languages:
@@ -41,10 +43,9 @@ router.get('/', (req, res, next) => {
 
 router.get('/languages', (req, res, next) =>{
 
-  getProcedure('GetLanguage')
     Connection.then(pool => {
       return pool.request()
-        .execute(procedureName)
+        .execute('GetLanguages')
     }).then(result => {
       res.json(result.recordset);
     }).catch(err => next(err));
