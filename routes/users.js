@@ -59,7 +59,7 @@ router.get('/:id', (req, res, next) => {
       .input('userID', sql.UniqueIdentifier, req.params.id)
       .execute('GetUser')
   }).then(result => {
-    res.json(result.recordset);
+    res.json(result.recordset[0]);
   }).catch(err => next(err));
 })
 

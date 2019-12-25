@@ -90,7 +90,7 @@ router.post('/add', (req, res, next) => {
             .execute('AddCategory')
 
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })

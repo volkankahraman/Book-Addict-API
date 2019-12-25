@@ -9,6 +9,14 @@ const options = {
             servers: ["http://localhost:3000"],
         },
         basePath: '/api/v1',
+        securityDefinitions: {
+            bearerAuth: {
+                type: 'apiKey',
+                name: 'Authorization',
+                scheme: 'bearer',
+                in: 'header',
+            },
+        },
     },
     apis: ['./routes/*.js'],
 };

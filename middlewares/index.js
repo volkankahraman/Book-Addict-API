@@ -1,5 +1,7 @@
-var express = require('express');
-var logger = require('morgan')('dev');
+const express = require('express'),
+      logger = require('morgan')('dev'),
+      { lowerCaseKeys } = require('./../Utils')
+
 
 let useMiddleWares = (app) => {
     app.use(logger);
@@ -7,6 +9,10 @@ let useMiddleWares = (app) => {
     app.use(express.urlencoded({
         extended: false
     }));
+    app.use((req, res, next) => {
+        req.body = lowerCaseKeys(req.body);
+        next();
+    });
 }
 
 module.exports = useMiddleWares;

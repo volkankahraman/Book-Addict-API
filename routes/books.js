@@ -1,15 +1,16 @@
-const express = require('express');
-
-const { Connection, sql } = require('./../Database/connection');
-
-
-let router = express.Router();
+const express = require('express'),
+    { authorize } = require('./../authorization'),
+    { Connection, sql } = require('./../Database/connection'),
+    router = express.Router();
+    
 /**
  * @swagger
  * /books:
  *    get:
  *      tags:
  *       - Books
+ *      security:
+ *       - bearerAuth: []
  *      description: Kitapların listesini döner
  *      responses:
  *        '200':

@@ -10,7 +10,7 @@ const { Connection, sql } = require('./../Database/connection');
 * /login:
 *    post:
 *      tags:
-*       - Languages
+*       - Login
 *      parameters:
 *       - name: username
 *         description: users's username
@@ -29,7 +29,7 @@ const { Connection, sql } = require('./../Database/connection');
 */
 
 router.post('/', (req, res, next)=>{
-    
+
     Connection.then(pool => {
         return pool.request()
             .input('username', sql.NVarChar(900), req.body.username)
