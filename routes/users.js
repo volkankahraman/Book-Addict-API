@@ -1,5 +1,6 @@
 const express = require('express');
 const md5 = require('md5')
+const jwt = require('jsonwebtoken')
 const {Connection, sql} = require('./../Database/connection');
 
 
@@ -115,7 +116,15 @@ router.post('/add',(req,res,next) =>{
             .execute('addUser')
 
         }).then(result => {
-          if (result) res.json(result.recordset[0]);
+          let user = result.recordset[0];
+          jwt.sign(user, process.env.SECRET_KEY, function (err, token) {
+          user.token = token;
+            if (err) {
+              next(err);
+            } else {
+              res.json(user);
+            }
+          })
         }).catch(err => next(err))
       }else{
         res.json({
