@@ -33,6 +33,8 @@ router.get('/', (req, res, next) => {
 *      responses:
 *        '200':
 *          description: OK
+*        '401':
+*          description: Unauthorized
 *        '404':
 *          description: Not Found
 *        '500':

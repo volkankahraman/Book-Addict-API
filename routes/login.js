@@ -23,6 +23,8 @@ const express = require('express'),
 *      responses:
 *        '200':
 *          description: OK
+*        '401':
+*          description: Unauthorized
 *        '404':
 *          description: Not Found
 *        '500':
@@ -48,7 +50,7 @@ router.post('/', (req, res, next) => {
                 }
             });
         } else {
-            res.json({ err: 'Kullanıcı adı ve ya şifre yanlış' })
+            res.status(401).json({ err: 'Kullanıcı adı ve ya şifre yanlış' })
         }
 
     }).catch(err => next(err));
