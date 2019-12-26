@@ -9,7 +9,7 @@ const express = require('express'),
  * /:
  *    get:
  *      tags:
- *       - Anasayfa
+ *       - Home
  *      description: Karşılama mesajı verir.
  *      responses: 
  *        '200':

@@ -87,6 +87,8 @@ router.get('/:id', (req, res, next) => {
  *      responses:
  *        '200':
  *          description: İstenilen kullanıcı dönüldü
+ *        '400':
+ *          description: Böyle bir kullanıcı var.
  *        '404':
  *          description: Sayfa bulunamadı
  *        '500':
@@ -126,7 +128,7 @@ router.post('/add', (req,res,next) =>{
           })
         }).catch(err => next(err))
       }else{
-        res.json({
+        res.status(400).json({
           err: 'Böyle bir kullanıcı var'
         })
       }
