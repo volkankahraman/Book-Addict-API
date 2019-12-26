@@ -8,6 +8,8 @@ const express = require('express'),
  * @swagger
  * /:
  *    get:
+ *      tags:
+ *       - Anasayfa
  *      description: Karşılama mesajı verir.
  *      responses: 
  *        '200':

@@ -1,6 +1,7 @@
 const express = require('express'),
   { authorize } = require('./../authorization'),
   { Connection, sql } = require('./../Database/connection'),
+  jwt = require('jsonwebtoken'),
   md5 = require('md5'),
   router = express.Router();
 
