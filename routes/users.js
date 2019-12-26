@@ -28,7 +28,7 @@ router.get('/', (req, res, next) => {
     return pool.request()
       .execute('GetUsers')
   }).then(result => {
-    res.json(result.recordset);
+    res.json(result.recordset[0]);
   }).catch(err => next(err));
 
 })
@@ -78,7 +78,7 @@ router.get('/:id', (req, res, next) => {
  *         description: user's password
  *         in: formData
  *       - name: fullName
- *         description: user's mail
+ *         description: user's fullName
  *         in: formData
  *       - name: mail
  *         description: user's mail
@@ -95,7 +95,7 @@ router.get('/:id', (req, res, next) => {
  */
 
 router.post('/add',(req,res,next) =>{
-  if(req.body.username && req.body.password && req.body.fullName && req.body.mail){
+  if(req.body.username && req.body.password && req.body.fullname && req.body.mail){
     Connection.then(pool => {
       return pool.request()
         .input('username', sql.NVarChar(50), req.body.username)
@@ -109,13 +109,13 @@ router.post('/add',(req,res,next) =>{
           return pool.request()
             .input('username', sql.NVarChar(50), req.body.username)
             .input('password', sql.NVarChar(50), md5(req.body.password))
-            .input('userFullName', sql.NVarChar(100), req.body.fullName)
+            .input('userFullName', sql.NVarChar(100), req.body.fullname)
             .input('mail', sql.NVarChar(100), req.body.mail)
 
             .execute('addUser')
 
         }).then(result => {
-          if (result) res.json(req.body);
+          if (result) res.json(result.recordset[0]);
         }).catch(err => next(err))
       }else{
         res.json({

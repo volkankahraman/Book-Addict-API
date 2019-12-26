@@ -1,6 +1,6 @@
 const express = require('express'),
-      md5 = require('md5'),
-      jwt = require('jsonwebtoken')
+    md5 = require('md5'),
+    jwt = require('jsonwebtoken')
 let router = express.Router();
 const { Connection, sql } = require('./../Database/connection');
 
@@ -28,7 +28,7 @@ const { Connection, sql } = require('./../Database/connection');
 *          description: Internal Error
 */
 
-router.post('/', (req, res, next)=>{
+router.post('/', (req, res, next) => {
 
     Connection.then(pool => {
         return pool.request()
@@ -36,19 +36,20 @@ router.post('/', (req, res, next)=>{
             .input('password', sql.NVarChar(900), md5(req.body.password))
             .execute('ControlLogin')
     }).then(result => {
-        if (result.recordset[0]){
+        if (result.recordset[0]) {
             let user = result.recordset[0][0]
             jwt.sign(user, process.env.SECRET_KEY, function (err, token) {
+                user.token = token
                 if (err) {
                     next(err);
                 } else {
-                    res.json({user,token:token});
+                    res.json( user );
                 }
             });
-        }else{
-            res.json({err: 'Kullanıcı adı ve ya şifre yanlış'})
+        } else {
+            res.json({ err: 'Kullanıcı adı ve ya şifre yanlış' })
         }
-        
+
     }).catch(err => next(err));
 })
 
