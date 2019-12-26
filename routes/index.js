@@ -1,13 +1,8 @@
 const express = require('express'),
-      jwt = require('jsonwebtoken');
-let router = express.Router();
-const {Connection, sql} = require('./../Database/connection');
-
-/* GET home page. */
-
-function getProcedure(procedureName) {
-  
-}
+  { authorize } = require('./../authorization'),
+  { Connection, sql } = require('./../Database/connection'),
+  jwt = require('jsonwebtoken'),
+  router = express.Router();
 
 /**
  * @swagger
@@ -25,6 +20,29 @@ router.get('/', (req, res, next) => {
   });
 });
 
+
+/**
+* @swagger
+* /checkToken:
+*    post:
+*      security:
+*       - bearerAuth: []
+*      tags:
+*       - Login
+*      description: true/false döner
+*      responses:
+*        '200':
+*          description: OK
+*        '404':
+*          description: Not Found
+*        '500':
+*          description: Internal Error
+*/
+router.post('/checkToken', authorize, (req, res, next) => {
+  res.json({
+    message: true
+  })
+})
 
 
 /**

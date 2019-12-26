@@ -1,9 +1,7 @@
-const express = require('express');
-const {Connection, sql} = require('./../Database/connection');
-
-
-let router = express.Router();
-
+const express = require('express'),
+    { authorize } = require('./../authorization'),
+    { Connection, sql } = require('./../Database/connection'),
+    router = express.Router();
 /* GET Category listing. */
 /**
  * @swagger

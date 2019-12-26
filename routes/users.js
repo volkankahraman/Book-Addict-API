@@ -1,10 +1,8 @@
-const express = require('express');
-const md5 = require('md5')
-const jwt = require('jsonwebtoken')
-const {Connection, sql} = require('./../Database/connection');
-
-
-let router = express.Router();
+const express = require('express'),
+  { authorize } = require('./../authorization'),
+  { Connection, sql } = require('./../Database/connection'),
+  md5 = require('md5'),
+  router = express.Router();
 
 /* GET users listing. */
 /**
@@ -95,7 +93,7 @@ router.get('/:id', (req, res, next) => {
  *
  */
 
-router.post('/add',(req,res,next) =>{
+router.post('/add', (req,res,next) =>{
   if(req.body.username && req.body.password && req.body.fullname && req.body.mail){
     Connection.then(pool => {
       return pool.request()

@@ -1,8 +1,9 @@
 const express = require('express'),
-    md5 = require('md5'),
-    jwt = require('jsonwebtoken')
-let router = express.Router();
-const { Connection, sql } = require('./../Database/connection');
+    { authorize } = require('./../authorization'),
+    { Connection, sql } = require('./../Database/connection'),
+    jwt = require('jsonwebtoken'),
+    md5 = require('md5')
+    router = express.Router();
 
 /* GET home page. */
 /**
