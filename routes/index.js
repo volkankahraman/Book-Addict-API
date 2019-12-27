@@ -71,7 +71,7 @@ router.get('/languages', (req, res, next) =>{
       return pool.request()
         .execute('GetLanguages')
     }).then(result => {
-      res.json(result.recordset);
+      res.json(result.recordset[0]);
     }).catch(err => next(err));
 
 })

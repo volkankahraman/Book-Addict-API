@@ -42,7 +42,7 @@ router.post('/', (req, res, next) => {
         if (result.recordset[0]) {
             let user = result.recordset[0][0]
             jwt.sign(user, process.env.SECRET_KEY, function (err, token) {
-                user.token = token
+                user.Token = token
                 if (err) {
                     next(err);
                 } else {

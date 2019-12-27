@@ -227,7 +227,7 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
 
 /**
  * @swagger
- * /users/{id}/addFavoriteCatagory:
+ * /users/{id}/addFavoriteCategory:
  *    post:
  *      tags:
  *       - Users
@@ -248,7 +248,7 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post('/:id/addFavoriteCatagory', (req, res, next) => {
+router.post('/:id/addFavoriteCategory', (req, res, next) => {
   Connection.then(pool => {
     return pool.request()
       .input('UserID', sql.UniqueIdentifier, req.params.id)

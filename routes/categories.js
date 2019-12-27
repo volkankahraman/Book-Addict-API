@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
         return pool.request()
             .execute('GetCategories')
     }).then(result => {
-        res.json(result.recordset);
+        res.json(result.recordset[0]);
     }).catch(err => next(err));
 })
 
