@@ -1,6 +1,14 @@
 const express = require('express'),
-    { authorize } = require('./../authorization'),
-    { Connection, sql } = require('./../Database/connection'),
+    {
+        authorize
+    } = require('./../authorization'),
+    {
+        Connection,
+        sql
+    } = require('./../Database/connection'),
+    {
+        getBooKFromKitapyurdu
+    } = require('./../Utils'),
     router = express.Router();
 
 /**
@@ -67,7 +75,37 @@ router.get('/:id', (req, res, next) => {
 
 })
 
+/**
+ * @swagger
+ * /books/getBookFromInternet/{bookName}:
+ *    get:
+ *      tags:
+ *       - Books
+ *      parameters:
+ *       - name: bookName
+ *         description: book's name
+ *         in: path
+ *      description: İstenilen kitap ismine ait bir kitap döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kitap dönüldü
+ *        '404':
+ *          description: kitap bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
 
+router.get('/getBookFromInternet/:bookName', (req, res, err) => {
+    getBooKFromKitapyurdu(req.params.bookName)
+        .then(book => {
+            res.json(book)
+        })
+        .catch((err) => {
+            next(err)
+        })
+
+})
 /**
  * @swagger
  * /books/find/{search}:
@@ -89,8 +127,8 @@ router.get('/:id', (req, res, next) => {
  *
  */
 
-router.get('/find/:search', (req, res, next) => {    
-    
+router.get('/find/:search', (req, res, next) => {
+
     Connection.then(pool => {
         return pool.request()
             .input('search', sql.NVarChar(100), req.params.search)
@@ -167,17 +205,18 @@ router.get('/findByCategory/:category', (req, res, next) => {
  */
 router.post('/add', (req, res, next) => {
     Connection.then(pool => {
-        if (req.body.bookname || req.body.bookNumberOfPages || req.body.bookCoverPicturePath || req.body.languageID){
-        return pool.request()
-            .input('bookName', sql.NVarChar(50), req.body.bookname)
-            .input('bookNumberOfPages', sql.Int, req.body.bookNumberOfPages)
-            .input('bookCoverPicturePath', sql.NVarChar(100), req.body.bookCoverPicturePath)
-            .input('languageID', sql.NVarChar(100), req.body.languageID)
+        if (req.body.bookname || req.body.bookNumberOfPages || req.body.bookCoverPicturePath || req.body.languageID) {
+            return pool.request()
+                .input('bookName', sql.NVarChar(50), req.body.bookname)
+                .input('bookNumberOfPages', sql.Int, req.body.bookNumberOfPages)
+                .input('bookCoverPicturePath', sql.NVarChar(100), req.body.bookCoverPicturePath)
+                .input('languageID', sql.NVarChar(100), req.body.languageID)
 
-            .execute('addBook')
-        }
-        else
-            res.status(500).json({ message: "Parametre eksik" });
+                .execute('addBook')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
         if (result) res.json(req.body);
     }).catch(err => next(err))
@@ -209,8 +248,8 @@ router.post('/add', (req, res, next) => {
 router.post('/:id/addAuthor', (req, res, next) => {
     Connection.then(pool => {
         return pool.request()
-            .input('BookID', sql.UniqueIdentifier , req.params.id)
-            .input('AuthorID', sql.UniqueIdentifier , req.body.authorid)
+            .input('BookID', sql.UniqueIdentifier, req.params.id)
+            .input('AuthorID', sql.UniqueIdentifier, req.body.authorid)
 
             .execute('AddBookAuthor')
 
