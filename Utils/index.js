@@ -72,7 +72,53 @@ let getBooKFromKitapyurdu = function (bookName) {
         })
 }
 
+let getBooKFromAPI = function (bookName) {
+    return new Promise((resolve, reject) => {
+        let aranan = encodeURI(bookName),
+            url = `https://www.googleapis.com/books/v1/volumes?q=${aranan}`;
+        axios.get(url)
+            .then(response => {
+                let data = response.data.items[0].volumeInfo;
+                book = {
+                    Name: data.title,
+                    CoverPicturePath: data.imageLinks.thumbnail,
+                    Star: 0,
+                    Language: {
+                        Language: "Turkish (Turkey)"
+                    },
+                    Authors: {
+                        Fullname: (data.authors) ? data.authors[0] : undefined
+                    },
+                    Categories: {
+                        Name: (data.categories) ? data.categories[0] : undefined
+                    },
+                    PublicationInformation: {
+                        ISBN: (data.industryIdentifiers) ? data.industryIdentifiers[1].identifier : undefined,
+                        PublishYear: (data.publishedDate) ? data.publishedDate.split('-')[0] : undefined,
+                        Publisher: {
+                            Name: data.publisher,
+                        }
+                    },
+
+                    Description: data.description,
+                    NumberOfPages: data.pageCount
+                };
+                console.log(book);
+
+                if (book)
+                    resolve(book)
+                else
+                    reject(Error("kitap çekilemedi"))
+
+            })
+            .catch(error => {
+                reject(error);
+            })
+    })
+}
+
 module.exports = {
     lowerCaseKeys,
-    getBooKFromKitapyurdu
+    getBooKFromKitapyurdu,
+    getBooKFromAPI
 }

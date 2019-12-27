@@ -7,7 +7,8 @@ const express = require('express'),
         sql
     } = require('./../Database/connection'),
     {
-        getBooKFromKitapyurdu
+        getBooKFromKitapyurdu,
+        getBooKFromAPI
     } = require('./../Utils'),
     router = express.Router();
 
@@ -96,7 +97,7 @@ router.get('/:id', (req, res, next) => {
  *
  */
 
-router.get('/getBookFromInternet/:bookName', (req, res, err) => {
+router.get('/getBookFromInternet/:bookName', (req, res, next) => {
     getBooKFromKitapyurdu(req.params.bookName)
         .then(book => {
             res.json(book)
@@ -106,6 +107,41 @@ router.get('/getBookFromInternet/:bookName', (req, res, err) => {
         })
 
 })
+
+/**
+ * @swagger
+ * /books/getBooKFromAPI/{bookName}:
+ *    get:
+ *      tags:
+ *       - Books
+ *      parameters:
+ *       - name: bookName
+ *         description: book's name
+ *         in: path
+ *      description: İstenilen kitap ismine ait bir kitap döner
+ *      responses:
+ *        '200':
+ *          description: İstenilen kitap dönüldü
+ *        '404':
+ *          description: kitap bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
+
+router.get('/getBooKFromAPI/:bookName', (req, res, next) => {
+    console.log('a');
+
+    getBooKFromAPI(req.params.bookName)
+        .then(book => {
+            res.json(book)
+        })
+        .catch((err) => {
+            next(err)
+        })
+
+})
+
 /**
  * @swagger
  * /books/find/{search}:
