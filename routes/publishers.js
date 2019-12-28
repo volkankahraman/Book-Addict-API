@@ -3,8 +3,6 @@ const express = require('express'),
     { Connection, sql } = require('./../Database/connection'),
     router = express.Router();
 
-
-/* GET Publishers listing. */
 /**
  * @swagger
  * /publishers:

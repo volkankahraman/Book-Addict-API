@@ -5,7 +5,6 @@ const express = require('express'),
     md5 = require('md5')
 router = express.Router();
 
-/* GET home page. */
 /**
 * @swagger
 * /login:
@@ -30,7 +29,6 @@ router = express.Router();
 *        '500':
 *          description: Internal Error
 */
-
 router.post('/', (req, res, next) => {
 
     Connection.then(pool => {
@@ -58,6 +56,7 @@ router.post('/', (req, res, next) => {
             res.status(401).json({ err: 'Kullanıcı adı ve ya şifre yanlış' })
         }
     }).catch(err => next(err));
+    
 })
 
 module.exports = router;

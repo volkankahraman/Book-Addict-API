@@ -2,7 +2,7 @@ const express = require('express'),
     { authorize } = require('./../authorization'),
     { Connection, sql } = require('./../Database/connection'),
     router = express.Router();
-/* GET Category listing. */
+
 /**
  * @swagger
  * /categories:
@@ -60,8 +60,6 @@ router.get('/:id', (req, res, next) => {
     }).catch(err => next(err));
 
 })
-
-
 
 /**
  * @swagger

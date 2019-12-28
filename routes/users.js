@@ -97,8 +97,8 @@ router.get('/:id', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.post('/add', (req, res, next) => {
+
   if (req.body.username && req.body.password && req.body.fullname && req.body.mail) {
     Connection.then(pool => {
       return pool.request()
@@ -134,6 +134,7 @@ router.post('/add', (req, res, next) => {
   }
   else
     res.status(500).json({ message: "Parametre eksik" });
+
 });
 
 /**

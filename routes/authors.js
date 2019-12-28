@@ -3,7 +3,6 @@ const express = require('express'),
     { Connection, sql } = require('./../Database/connection'),
     router = express.Router();
 
-
 /**
  * @swagger
  * /authors:
@@ -19,7 +18,6 @@ const express = require('express'),
  *        '500':
  *          description: Sunucu hatası
  */
-
 router.get('/', (req, res, next) => {
 
     Connection.then(pool => {
@@ -51,7 +49,6 @@ router.get('/', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/:id', (req, res, next) => {
 
     Connection.then(pool => {
@@ -84,7 +81,6 @@ router.get('/:id', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/find/:search', (req, res, next) => {
 
     Connection.then(pool => {
@@ -118,7 +114,6 @@ router.get('/find/:search', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.post('/add', (req, res, next) => {
 
     Connection.then(pool => {

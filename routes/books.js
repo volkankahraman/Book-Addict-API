@@ -29,7 +29,6 @@ const express = require('express'),
  *        '500':
  *          description: Sunucu hatası
  */
-
 router.get('/', (req, res, next) => {
 
     Connection.then(pool => {
@@ -61,7 +60,6 @@ router.get('/', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/:id', (req, res, next) => {
 
     Connection.then(pool => {
@@ -95,7 +93,6 @@ router.get('/:id', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/getBookFromInternet/:bookName', (req, res, next) => {
 
     getBooKFromKitapyurdu(req.params.bookName)
@@ -128,7 +125,6 @@ router.get('/getBookFromInternet/:bookName', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/getBooKFromAPI/:bookName', (req, res, next) => {
     console.log('a');
 
@@ -162,7 +158,6 @@ router.get('/getBooKFromAPI/:bookName', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/find/:search', (req, res, next) => {
 
     Connection.then(pool => {
@@ -195,7 +190,6 @@ router.get('/find/:search', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.get('/findByCategory/:category', (req, res, next) => {
 
     Connection.then(pool => {
@@ -240,7 +234,6 @@ router.get('/findByCategory/:category', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-
 router.post('/add', (req, res, next) => {
 
     Connection.then(pool => {
@@ -341,7 +334,7 @@ router.post('/:id/addCategory', (req, res, next) => {
     }).then(result => {
         if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
-
+    
 })
 
 /**
