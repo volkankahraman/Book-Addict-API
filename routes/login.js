@@ -3,7 +3,7 @@ const express = require('express'),
     { Connection, sql } = require('./../Database/connection'),
     jwt = require('jsonwebtoken'),
     md5 = require('md5')
-    router = express.Router();
+router = express.Router();
 
 /* GET home page. */
 /**
@@ -34,25 +34,29 @@ const express = require('express'),
 router.post('/', (req, res, next) => {
 
     Connection.then(pool => {
-        return pool.request()
-            .input('username', sql.NVarChar(900), req.body.username)
-            .input('password', sql.NVarChar(900), md5(req.body.password))
-            .execute('ControlLogin')
+        if (req.body.username && req.body.password) {
+            return pool.request()
+                .input('username', sql.NVarChar(900), req.body.username)
+                .input('password', sql.NVarChar(900), md5(req.body.password))
+                .execute('ControlLogin')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
         if (result.recordset[0]) {
-            let user = result.recordset[0][0]
+            let user = result.recordset[0]
             jwt.sign(user, process.env.SECRET_KEY, function (err, token) {
                 user.Token = token
                 if (err) {
                     next(err);
                 } else {
-                    res.json( user );
+                    res.json(user);
                 }
             });
         } else {
             res.status(401).json({ err: 'Kullanıcı adı ve ya şifre yanlış' })
         }
-
     }).catch(err => next(err));
 })
 

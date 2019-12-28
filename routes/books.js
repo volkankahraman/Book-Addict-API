@@ -31,10 +31,10 @@ const express = require('express'),
  */
 
 router.get('/', (req, res, next) => {
+
     Connection.then(pool => {
         return pool.request()
             .execute('GetBooks')
-
     }).then(result => {
         if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
@@ -68,7 +68,6 @@ router.get('/:id', (req, res, next) => {
         return pool.request()
             .input('bookID', sql.UniqueIdentifier, req.params.id)
             .execute('GetBook')
-
     }).then(result => {
         console.dir(result);
         if (result) res.json(result.recordset[0]);
@@ -98,6 +97,7 @@ router.get('/:id', (req, res, next) => {
  */
 
 router.get('/getBookFromInternet/:bookName', (req, res, next) => {
+
     getBooKFromKitapyurdu(req.params.bookName)
         .then(book => {
             res.json(book)
@@ -169,7 +169,6 @@ router.get('/find/:search', (req, res, next) => {
         return pool.request()
             .input('search', sql.NVarChar(100), req.params.search)
             .execute('GetBooksBySearch')
-
     }).then(result => {
         if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
@@ -203,7 +202,6 @@ router.get('/findByCategory/:category', (req, res, next) => {
         return pool.request()
             .input('categoryID', sql.NVarChar(100), req.params.category)
             .execute('GetBooksByCategory')
-
     }).then(result => {
         if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
@@ -226,6 +224,9 @@ router.get('/findByCategory/:category', (req, res, next) => {
  *       - name: bookCoverPicturePath
  *         description: book's bookCoverPicturePath
  *         in: formData
+ *       - name: description
+ *         description: book's description
+ *         in: formData
  *       - name: languageID
  *         description: book's languageID
  *         in: formData
@@ -239,23 +240,26 @@ router.get('/findByCategory/:category', (req, res, next) => {
  *          description: Sunucu hastası
  *
  */
-router.post('/add', (req, res, next) => {
-    Connection.then(pool => {
-        if (req.body.bookname || req.body.bookNumberOfPages || req.body.bookCoverPicturePath || req.body.languageID) {
-            return pool.request()
-                .input('bookName', sql.NVarChar(50), req.body.bookname)
-                .input('bookNumberOfPages', sql.Int, req.body.bookNumberOfPages)
-                .input('bookCoverPicturePath', sql.NVarChar(100), req.body.bookCoverPicturePath)
-                .input('languageID', sql.NVarChar(100), req.body.languageID)
 
+router.post('/add', (req, res, next) => {
+
+    Connection.then(pool => {
+        if (req.body.bookname && req.body.booknumberofpages && req.body.bookcoverpicturepath && req.body.languageid) {
+            return pool.request()
+                .input('bookName', sql.NVarChar(100), req.body.bookname)
+                .input('bookNumberOfPages', sql.Int, req.body.booknumberofpages)
+                .input('bookCoverPicturePath', sql.NVarChar(100), req.body.bookcoverpicturepath)
+                .input('description', sql.NVarChar(100), req.body.description)
+                .input('languageID', sql.NVarChar(100), req.body.languageid)
                 .execute('addBook')
         } else
             res.status(500).json({
                 message: "Parametre eksik"
             });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
+
 })
 
 /**
@@ -282,15 +286,19 @@ router.post('/add', (req, res, next) => {
  *
  */
 router.post('/:id/addAuthor', (req, res, next) => {
+
     Connection.then(pool => {
-        return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.id)
-            .input('AuthorID', sql.UniqueIdentifier, req.body.authorid)
-
-            .execute('AddBookAuthor')
-
+        if (req.body.authorid) {
+            return pool.request()
+                .input('bookID', sql.UniqueIdentifier, req.params.id)
+                .input('authorID', sql.UniqueIdentifier, req.body.authorid)
+                .execute('AddBookAuthor')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })
@@ -319,15 +327,19 @@ router.post('/:id/addAuthor', (req, res, next) => {
  *
  */
 router.post('/:id/addCategory', (req, res, next) => {
+
     Connection.then(pool => {
-        return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.id)
-            .input('CategoryID', sql.UniqueIdentifier, req.body.categoryid)
-
-            .execute('AddBookCategory')
-
+        if (req.body.categoryid) {
+            return pool.request()
+                .input('bookID', sql.UniqueIdentifier, req.params.id)
+                .input('categoryID', sql.UniqueIdentifier, req.body.categoryid)
+                .execute('AddBookCategory')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })
@@ -362,17 +374,22 @@ router.post('/:id/addCategory', (req, res, next) => {
  *
  */
 router.post('/:id/addPublisher', (req, res, next) => {
+
     Connection.then(pool => {
-        return pool.request()
-            .input('BookISBN', sql.NVarChar(17), req.body.bookisbn)
-            .input('BookID', sql.UniqueIdentifier, req.params.id)
-            .input('PublisherID', sql.UniqueIdentifier, req.body.publisherid)
-            .input('PublishYear', sql.NVarChar(4), req.body.publishyear)
-
-            .execute('AddBookPublishicationInformation')
-
+        console.log(req.body)
+        if (req.body.bookisbn && req.body.publisherid && req.body.publishyear) {
+            return pool.request()
+                .input('bookISBN', sql.NVarChar(17), req.body.bookisbn)
+                .input('bookID', sql.UniqueIdentifier, req.params.id)
+                .input('publisherID', sql.UniqueIdentifier, req.body.publisherid)
+                .input('publishYear', sql.NVarChar(4), req.body.publishyear)
+                .execute('AddBookPublishicationInformation')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })
@@ -388,7 +405,7 @@ router.post('/:id/addPublisher', (req, res, next) => {
  *         description: book's bookid
  *         in: path
  *       - name: userid
- *         description: book's userid
+ *         description: user's userid
  *         in: formData
  *       - name: star
  *         description: book's star
@@ -404,16 +421,22 @@ router.post('/:id/addPublisher', (req, res, next) => {
  *
  */
 router.post('/:id/addStar', (req, res, next) => {
+
     Connection.then(pool => {
-        return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.id)
-            .input('UserID', sql.UniqueIdentifier, req.body.userid)
-            .input('Star', sql.Int, req.body.star)
-
-            .execute('AddBookStar')
-
+        if (req.body.userid && req.body.star) {
+            return pool.request()
+                .input('bookID', sql.UniqueIdentifier, req.params.id)
+                .input('userID', sql.UniqueIdentifier, req.body.userid)
+                .input('Star', sql.Int, req.body.star)
+                .execute('AddBookStar')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json({
+            message: "Yıldız Eklendi"
+        });
     }).catch(err => next(err))
 
 })
@@ -445,21 +468,24 @@ router.post('/:id/addStar', (req, res, next) => {
  *
  */
 router.post('/:id/addComment', (req, res, next) => {
+
     Connection.then(pool => {
-        return pool.request()
-            .input('BookID', sql.UniqueIdentifier, req.params.id)
-            .input('UserID', sql.UniqueIdentifier, req.body.userid)
-            .input('Comment', sql.NVarChar(300), req.body.comment)
-
-            .execute('AddBookComment')
-
+        if (req.body.userid && req.body.comment) {
+            return pool.request()
+                .input('bookID', sql.UniqueIdentifier, req.params.id)
+                .input('userID', sql.UniqueIdentifier, req.body.userid)
+                .input('comment', sql.NVarChar(300), req.body.comment)
+                .execute('AddBookComment')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json({
+            message: "Yorum Eklendi"
+        });
     }).catch(err => next(err))
 
 })
-
-
-
 
 module.exports = router;

@@ -22,7 +22,6 @@ router.get('/', (req, res, next) => {
   });
 });
 
-
 /**
 * @swagger
 * /checkToken:
@@ -48,7 +47,6 @@ router.post('/checkToken', authorize, (req, res, next) => {
   })
 })
 
-
 /**
  * @swagger
  * /languages:
@@ -64,15 +62,14 @@ router.post('/checkToken', authorize, (req, res, next) => {
  *        '500':
  *          description: Sunucu hatası
  */
+router.get('/languages', (req, res, next) => {
 
-router.get('/languages', (req, res, next) =>{
-
-    Connection.then(pool => {
-      return pool.request()
-        .execute('GetLanguages')
-    }).then(result => {
-      res.json(result.recordset[0]);
-    }).catch(err => next(err));
+  Connection.then(pool => {
+    return pool.request()
+      .execute('GetLanguages')
+  }).then(result => {
+    if (result) res.json(result.recordset[0]);
+  }).catch(err => next(err));
 
 })
 
@@ -102,7 +99,7 @@ router.get('/languages/:id', (req, res, next) => {
       .input('languageID', sql.UniqueIdentifier, req.params.id)
       .execute('GetLanguage')
   }).then(result => {
-    res.json(result.recordset[0]);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err));
 })
 

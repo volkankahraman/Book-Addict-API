@@ -21,12 +21,14 @@ const express = require('express'),
  *          description: Sunucu hatası
  */
 router.get('/', (req, res, next) => {
+
     Connection.then(pool => {
         return pool.request()
             .execute('GetPublishers')
     }).then(result => {
-        res.json(result.recordset[0]);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err));
+
 })
 
 /**
@@ -52,19 +54,18 @@ router.get('/', (req, res, next) => {
 router.post('/add', (req, res, next) => {
 
     Connection.then(pool => {
-        return pool.request()
-            .input('PublisherName', sql.VarChar(100), req.body.publisherName)
-
-            .execute('AddPublisher')
-
+        if (req.body.publishername) {
+            return pool.request()
+                .input('publisherName', sql.VarChar(100), req.body.publishername)
+                .execute('AddPublisher')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
 
 })
-
-
-
-
 
 module.exports = router;

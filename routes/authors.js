@@ -20,16 +20,17 @@ const express = require('express'),
  *          description: Sunucu hatası
  */
 
-router.get('/',(req,res,next) => {
+router.get('/', (req, res, next) => {
 
     Connection.then(pool => {
         return pool.request()
             .execute('GetAuthors')
     }).then(result => {
-        res.json(result.recordset[0]);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err));
 
 })
+
 /**
  * @swagger
  * /authors/{id}:
@@ -50,7 +51,9 @@ router.get('/',(req,res,next) => {
  *          description: Sunucu hastası
  *
  */
-router.get('/:id', (req,res,next) => {
+
+router.get('/:id', (req, res, next) => {
+
     Connection.then(pool => {
         return pool.request()
             .input('authorID', sql.UniqueIdentifier, req.params.id)
@@ -58,6 +61,7 @@ router.get('/:id', (req,res,next) => {
     }).then(result => {
         res.json(result.recordset[0]);
     }).catch(err => next(err));
+
 })
 
 /**
@@ -93,6 +97,7 @@ router.get('/find/:search', (req, res, next) => {
     }).catch(err => next(err))
 
 })
+
 /**
  * @swagger
  * /authors/add:
@@ -101,31 +106,34 @@ router.get('/find/:search', (req, res, next) => {
  *       - Authors
  *      parameters:
  *       - name: fullName
- *         description: user's mail
+ *         description: author's fullname
  *         in: formData
- *      description: İstenilen idye ait bir kullanıcı döner
+ *      description: İstenilen idye ait bir yazarı döner
  *      responses:
  *        '200':
- *          description: İstenilen kullanıcı dönüldü
+ *          description: İstenilen yazar dönüldü
  *        '404':
  *          description: Sayfa bulunamadı
  *        '500':
  *          description: Sunucu hastası
  *
  */
-router.post('/add', (req,res,next) =>{
+
+router.post('/add', (req, res, next) => {
 
     Connection.then(pool => {
-        return pool.request()
-            .input('authorFullName', sql.VarChar(100), req.body.fullName)
-            
-            .execute('AddAuthor')
-
+        if (req.body.fullname) {
+            return pool.request()
+                .input('authorFullName', sql.NVarChar(100), req.body.fullname)
+                .execute('AddAuthor')
+        } else
+            res.status(500).json({
+                message: "Parametre eksik"
+            });
     }).then(result => {
-        if (result) res.json(req.body);
+        if (result) res.json(result.recordset[0]);
     }).catch(err => next(err))
-    
-})
 
+})
 
 module.exports = router;

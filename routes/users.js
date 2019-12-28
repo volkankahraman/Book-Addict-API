@@ -28,7 +28,7 @@ router.get('/', (req, res, next) => {
     return pool.request()
       .execute('GetUsers')
   }).then(result => {
-    res.json(result.recordset[0]);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err));
 
 })
@@ -54,13 +54,15 @@ router.get('/', (req, res, next) => {
  * 
  */
 router.get('/:id', (req, res, next) => {
+
   Connection.then(pool => {
     return pool.request()
       .input('userID', sql.UniqueIdentifier, req.params.id)
       .execute('GetUser')
   }).then(result => {
-    res.json(result.recordset[0]);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err));
+
 })
 
 
@@ -96,30 +98,26 @@ router.get('/:id', (req, res, next) => {
  *
  */
 
-router.post('/add', (req,res,next) =>{
-  if(req.body.username && req.body.password && req.body.fullname && req.body.mail){
+router.post('/add', (req, res, next) => {
+  if (req.body.username && req.body.password && req.body.fullname && req.body.mail) {
     Connection.then(pool => {
       return pool.request()
         .input('username', sql.NVarChar(50), req.body.username)
         .input('mail', sql.NVarChar(50), req.body.mail)
         .execute('controlUsernameEmail')
-
-    }).then(result=>{
-
-      if (!result.recordset[0]){
+    }).then(result => {
+      if (!result.recordset[0]) {
         Connection.then(pool => {
           return pool.request()
             .input('username', sql.NVarChar(50), req.body.username)
             .input('password', sql.NVarChar(50), md5(req.body.password))
             .input('userFullName', sql.NVarChar(100), req.body.fullname)
             .input('mail', sql.NVarChar(100), req.body.mail)
-
             .execute('addUser')
-
         }).then(result => {
           let user = result.recordset[0];
           jwt.sign(user, process.env.SECRET_KEY, function (err, token) {
-          user.token = token;
+            user.Token = token;
             if (err) {
               next(err);
             } else {
@@ -127,17 +125,15 @@ router.post('/add', (req,res,next) =>{
             }
           })
         }).catch(err => next(err))
-      }else{
+      } else {
         res.status(400).json({
           err: 'Böyle bir kullanıcı var'
         })
       }
-    }).catch(err=> next(err))
-
-    
+    }).catch(err => next(err))
   }
   else
-    res.status(500).json({message:"Parametre eksik"});
+    res.status(500).json({ message: "Parametre eksik" });
 });
 
 /**
@@ -165,28 +161,21 @@ router.post('/add', (req,res,next) =>{
  */
 
 router.post('/:id/addFavoriteAuthor', (req, res, next) => {
-  // let missingParameter;
-  // for (let propertyName in req.body) {
-  //   separateObj[req.body.name] = req.body;
-  //   missingParameter += propertyName+ ' ';
-  // }
-  // res.json({message:missingParameter});
 
-  
-  if (req.body.authorid) {
-    Connection.then(pool => {
+  Connection.then(pool => {
+    if (req.body.authorid) {
       return pool.request()
-        .input('UserID', sql.UniqueIdentifier, req.params.id)
-        .input('AuthorId', sql.UniqueIdentifier, req.body.authorid)
-
+        .input('userID', sql.UniqueIdentifier, req.params.id)
+        .input('authorID', sql.UniqueIdentifier, req.body.authorid)
         .execute('AddFavouriteAuthor')
+    } else
+      res.status(500).json({
+        message: "Parametre eksik"
+      });
+  }).then(result => {
+    if (result) res.json(result.recordset[0]);
+  }).catch(err => next(err))
 
-    }).then(result => {
-      if (result) res.json(req.body);
-    }).catch(err => next(err))
-  }
-  else
-    res.status(500).json({ message: "Parametre eksik" });
 });
 
 /**
@@ -213,16 +202,21 @@ router.post('/:id/addFavoriteAuthor', (req, res, next) => {
  *
  */
 router.post('/:id/addFavoriteBook', (req, res, next) => {
+
   Connection.then(pool => {
-    return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.id)
-      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
-
-      .execute('AddFavouriteBook')
-
+    if (req.body.bookid) {
+      return pool.request()
+        .input('userID', sql.UniqueIdentifier, req.params.id)
+        .input('bookID', sql.UniqueIdentifier, req.body.bookid)
+        .execute('AddFavouriteBook')
+    } else
+      res.status(500).json({
+        message: "Parametre eksik"
+      });
   }).then(result => {
-    if (result) res.json(req.body);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err))
+
 })
 
 /**
@@ -249,15 +243,21 @@ router.post('/:id/addFavoriteBook', (req, res, next) => {
  *
  */
 router.post('/:id/addFavoriteCategory', (req, res, next) => {
-  Connection.then(pool => {
-    return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.id)
-      .input('CategoryID', sql.UniqueIdentifier, req.body.categoryid)
 
-      .execute('AddFavouriteCategory')
+  Connection.then(pool => {
+    if (req.body.categoryid) {
+      return pool.request()
+        .input('userID', sql.UniqueIdentifier, req.params.id)
+        .input('categoryID', sql.UniqueIdentifier, req.body.categoryid)
+        .execute('AddFavouriteCategory')
+    } else
+      res.status(500).json({
+        message: "Parametre eksik"
+      });
   }).then(result => {
-    if (result) res.json(req.body);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err))
+
 })
 
 /**
@@ -284,15 +284,21 @@ router.post('/:id/addFavoriteCategory', (req, res, next) => {
  *
  */
 router.post('/:id/addReadBook', (req, res, next) => {
-  Connection.then(pool => {
-    return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.id)
-      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
 
-      .execute('AddReadBook')
+  Connection.then(pool => {
+    if (req.body.bookid) {
+      return pool.request()
+        .input('userID', sql.UniqueIdentifier, req.params.id)
+        .input('bookID', sql.UniqueIdentifier, req.body.bookid)
+        .execute('AddReadBook')
+    } else
+      res.status(500).json({
+        message: "Parametre eksik"
+      });
   }).then(result => {
-    if (result) res.json(req.body);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err))
+
 })
 
 /**
@@ -319,16 +325,23 @@ router.post('/:id/addReadBook', (req, res, next) => {
  *
  */
 router.post('/:id/addWillReadBook', (req, res, next) => {
-  Connection.then(pool => {
-    return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.id)
-      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
 
-      .execute('AddWillReadBook')
+  Connection.then(pool => {
+    if (req.body.bookid) {
+      return pool.request()
+        .input('userID', sql.UniqueIdentifier, req.params.id)
+        .input('bookID', sql.UniqueIdentifier, req.body.bookid)
+        .execute('AddWillReadBook')
+    } else
+      res.status(500).json({
+        message: "Parametre eksik"
+      });
   }).then(result => {
-    if (result) res.json(req.body);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err))
+
 })
+
 /**
  * @swagger
  * /users/{id}/addViewBook:
@@ -353,16 +366,21 @@ router.post('/:id/addWillReadBook', (req, res, next) => {
  *
  */
 router.post('/:id/addViewBook', (req, res, next) => {
+
   Connection.then(pool => {
-    return pool.request()
-      .input('UserID', sql.UniqueIdentifier, req.params.id)
-      .input('BookID', sql.UniqueIdentifier, req.body.bookid)
-
-      .execute('AddViewBook')
+    if (req.body.bookid) {
+      return pool.request()
+        .input('userID', sql.UniqueIdentifier, req.params.id)
+        .input('bookID', sql.UniqueIdentifier, req.body.bookid)
+        .execute('AddViewBook')
+    } else
+      res.status(500).json({
+        message: "Parametre eksik"
+      });
   }).then(result => {
-    if (result) res.json(req.body);
+    if (result) res.json(result.recordset[0]);
   }).catch(err => next(err))
-})
 
+})
 
 module.exports = router;
