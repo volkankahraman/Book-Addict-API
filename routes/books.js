@@ -75,6 +75,34 @@ router.get('/:id', (req, res, next) => {
 
 /**
  * @swagger
+ * /books/book/recommendBook:
+ *    get:
+ *      tags:
+ *       - Books
+ *      description: Kitap Önerir
+ *      responses:
+ *        '200':
+ *          description: Önerilen kitap dönüldü
+ *        '404':
+ *          description: kitap bulunamadı
+ *        '500':
+ *          description: Sunucu hastası
+ *
+ */
+router.get('/book/recommendBook', (req, res, next) => {
+
+    Connection.then(pool => {
+        return pool.request()
+            .execute('RecommendBook')
+    }).then(result => {
+        console.log(result)
+        if (result) res.json(result.recordset[0]);
+    }).catch(err => next(err))
+
+})
+
+/**
+ * @swagger
  * /books/getBookFromInternet/{bookName}:
  *    get:
  *      tags:
@@ -242,7 +270,7 @@ router.post('/add', (req, res, next) => {
                 .input('bookName', sql.NVarChar(100), req.body.bookname)
                 .input('bookNumberOfPages', sql.Int, req.body.booknumberofpages)
                 .input('bookCoverPicturePath', sql.NVarChar(100), req.body.bookcoverpicturepath)
-                .input('description', sql.NVarChar(100), req.body.description)
+                .input('description', sql.NVarChar(sql.MAX), req.body.description)
                 .input('languageID', sql.NVarChar(100), req.body.languageid)
                 .execute('addBook')
         } else
